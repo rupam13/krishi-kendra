@@ -1,0 +1,16 @@
+{
+  "version": "v3.2.0-PRO",
+  "releaseDate": "2026-11-15",
+  "title": "Krishi Kendra Pro Production Suite",
+  "repo": "https://github.com/rupam13/krishi-kendra",
+  "downloadUrl": "https://raw.githubusercontent.com/rupam13/krishi-kendra/main/Krishi_Kendra_Billing.html",
+  "changelog": [
+    "Full 60-Day (2 Months) Free Trial with Hardware-bound Machine ID activation",
+    "Seasonal Demand Forecasting with Agricultural Multipliers (Rabi, Kharif, Zaid)",
+    "1-Click Wholesale Purchase Order (PO) with Distributor print & WhatsApp dispatch",
+    "Farmer 360° Profile & Net Profit Margin Intelligence per product",
+    "GitHub Production Remote Update & Machine Config Sync Engine",
+    "Same-Page Compact A4 GST Invoice + Deposit Receipt Printing",
+    "100% Offline Standalone Architecture with Zero External Server Lock-in"
+  ]
+}

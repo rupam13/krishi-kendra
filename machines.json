@@ -1,0 +1,17 @@
+{
+  "_comment": "Krishi Kendra Machine-Specific Custom Configuration Manifest",
+  "_repo": "https://github.com/rupam13/krishi-kendra",
+  "KK-DEFAULT": {
+    "kendraName": "अक्षय कृषी सेवा केंद्र (Akshay Krishi Seva Kendra)",
+    "tagline": "अधिकृत रासायनिक खते, दर्जेदार बियाणे व कीटकनाशके विक्रेते",
+    "ownerName": "अक्षय पाटील",
+    "phone": "9822011223",
+    "address": "गांधी चौक, चाळीसगाव, जि. जळगाव - ४२४१०१",
+    "gstin": "27AAAAA0000A1Z5",
+    "fertLic": "FL/MH/2026/1029",
+    "pestLic": "PL/MH/2026/8834",
+    "seedLic": "SL/MH/2026/4412",
+    "upiId": "wadibhasme.rupam1@ybl",
+    "notes": "Default production setup template"
+  }
+}

@@ -297,7 +297,12 @@
     size: A4 portrait;
     margin: 4mm 6mm;
   }
-  @media print {
+  
+    /* SCREEN VIEW: COMPLETELY HIDE ALL PRINTABLE TEMPLATES FROM SCREEN (DASHBOARD, BILLING, ETC.) */
+    #printableInvoice, #printableReceipt, .print-cut-line, #printableFarmerLedger, #printablePurchaseOrder {
+      display: none !important;
+    }
+@media print {
     html, body {
       background: #FFFFFF !important;
       margin: 0 !important;
@@ -1413,6 +1418,89 @@
 </div>
 
 <!-- SUBSCRIPTION RENEWAL MODAL WITH USER'S UPI ID -->
+
+  <!-- INITIAL ONBOARDING SETUP MODAL (पहिल्यांदा सुरू करताना केंद्र माहिती पॉप-अप) -->
+  <div class="modal-overlay" id="initialSetupModal" style="display: none; z-index: 999999; backdrop-filter: blur(6px); background: rgba(15, 23, 42, 0.85);">
+    <div class="modal-box" style="max-width: 650px; width: 95%; max-height: 90vh; overflow-y: auto; text-align: left; padding: 26px 24px; border-radius: 16px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4); border-top: 5px solid #16a34a; background: #ffffff;">
+      <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px; border-bottom: 1px solid #e2e8f0; padding-bottom: 12px;">
+        <div style="font-size: 38px;">🌾</div>
+        <div>
+          <h3 style="color: #166534; font-size: 20px; margin: 0; font-weight: 800;">आपल्या कृषी केंद्राची माहिती नोंदवा</h3>
+          <p style="color: #64748b; font-size: 12.5px; margin: 3px 0 0 0;">
+            सॉफ्टवेअर सुरू करण्यापूर्वी आपल्या व्यवसायाची माहिती भरा. ही माहिती तुमच्या सर्व बिलांवर, GST बीजकांवर, पावत्यांवर आणि QR कोडवर आपोआप दिसेल.
+          </p>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px;">
+        <div style="grid-column: span 2;">
+          <label style="font-size: 12.5px; font-weight: 700; color: #1e293b;">कृषी केंद्राचे नाव (Krishi Kendra / Shop Name) <span style="color: red;">*</span></label>
+          <input type="text" id="setupKendraName" placeholder="उदा. श्री स्वामी समर्थ कृषी सेवा केंद्र" style="width: 100%; padding: 8px 12px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 14px; margin-top: 4px; box-sizing: border-box; font-weight: 600;">
+        </div>
+
+        <div>
+          <label style="font-size: 12.5px; font-weight: 700; color: #1e293b;">मालकाचे / प्रोप्रायटर नाव (Owner Name)</label>
+          <input type="text" id="setupOwnerName" placeholder="उदा. सचिन विठ्ठल पाटील" style="width: 100%; padding: 8px 12px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 13px; margin-top: 4px; box-sizing: border-box;">
+        </div>
+
+        <div>
+          <label style="font-size: 12.5px; font-weight: 700; color: #1e293b;">मोबाईल / व्हॉट्सॲप नंबर (Phone / WhatsApp) <span style="color: red;">*</span></label>
+          <input type="tel" id="setupPhone" placeholder="उदा. 9876543210" style="width: 100%; padding: 8px 12px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 13px; margin-top: 4px; box-sizing: border-box;">
+        </div>
+
+        <div style="grid-column: span 2;">
+          <label style="font-size: 12.5px; font-weight: 700; color: #1e293b;">टॅगलाइन / ब्रीदवाक्य (Tagline / Slogan)</label>
+          <input type="text" id="setupTagline" placeholder="उदा. सर्व प्रकारची दर्जेदार खते, बियाणे व कीटकनाशके अधिकृत विक्रेते" style="width: 100%; padding: 8px 12px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 13px; margin-top: 4px; box-sizing: border-box;">
+        </div>
+
+        <div style="grid-column: span 2;">
+          <label style="font-size: 12.5px; font-weight: 700; color: #1e293b;">दुकान / व्यवसायाचा पूर्ण पत्ता (Complete Shop Address) <span style="color: red;">*</span></label>
+          <input type="text" id="setupAddress" placeholder="उदा. दुकान क्र. ४, कृषी उत्पन्न बाजार समिती समोर, मुख्य रस्ता, तालुका, जिल्हा" style="width: 100%; padding: 8px 12px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 13px; margin-top: 4px; box-sizing: border-box;">
+        </div>
+
+        <div>
+          <label style="font-size: 12.5px; font-weight: 700; color: #1e293b;">GSTIN क्रमांक (GST Number - असल्यास)</label>
+          <input type="text" id="setupGstin" placeholder="उदा. 27AABCK1234F1Z8" style="width: 100%; padding: 8px 12px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 12.5px; margin-top: 4px; box-sizing: border-box;">
+        </div>
+
+        <div>
+          <label style="font-size: 12.5px; font-weight: 700; color: #1e293b;">खत परवाना क्र. (Fertilizer Lic No.)</label>
+          <input type="text" id="setupFertLic" placeholder="उदा. FERT/MH/2026/01" style="width: 100%; padding: 8px 12px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 12.5px; margin-top: 4px; box-sizing: border-box;">
+        </div>
+
+        <div>
+          <label style="font-size: 12.5px; font-weight: 700; color: #1e293b;">कीटकनाशक परवाना क्र. (Pesticide Lic No.)</label>
+          <input type="text" id="setupPestLic" placeholder="उदा. PEST/LIC/8812" style="width: 100%; padding: 8px 12px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 12.5px; margin-top: 4px; box-sizing: border-box;">
+        </div>
+
+        <div>
+          <label style="font-size: 12.5px; font-weight: 700; color: #1e293b;">बियाणे परवाना क्र. (Seed Lic No.)</label>
+          <input type="text" id="setupSeedLic" placeholder="उदा. SEED/MH/4412" style="width: 100%; padding: 8px 12px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 12.5px; margin-top: 4px; box-sizing: border-box;">
+        </div>
+
+        <div>
+          <label style="font-size: 12.5px; font-weight: 700; color: #1e293b;">Kendra UPI ID (QR पेमेंट साठी) <span style="color: red;">*</span></label>
+          <input type="text" id="setupUpiId" placeholder="उदा. 9876543210@ybl किंवा केंद्र@upi" style="width: 100%; padding: 8px 12px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 12.5px; margin-top: 4px; box-sizing: border-box;">
+        </div>
+
+        <div>
+          <label style="font-size: 12.5px; font-weight: 700; color: #1e293b;">UPI Payee Name (QR कोड बँक नाव)</label>
+          <input type="text" id="setupUpiName" placeholder="उदा. Shree Swami Samarth Krishi Kendra" style="width: 100%; padding: 8px 12px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 12.5px; margin-top: 4px; box-sizing: border-box;">
+        </div>
+      </div>
+
+      <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 10px 14px; margin-bottom: 16px; font-size: 12px; color: #166534; display: flex; align-items: center; gap: 8px;">
+        <span>🔒</span>
+        <span>ही सर्व माहिती तुमच्या संगणकावर सुरक्षित राहील. आपण भविष्यात कधीही <strong>'सेटिंग्ज' (Settings)</strong> टॅबमधून ही माहिती बदलू शकता.</span>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 10px;">
+        <button class="btn btn-primary" onclick="saveInitialSetupAndStart()" style="padding: 10px 22px; font-size: 14px; font-weight: 700; background: linear-gradient(135deg, #15803d, #16a34a); border: none; border-radius: 8px; color: #fff; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+          <span>🚀 माहिती जतन करा व सॉफ्टवेअर सुरू करा (Save & Launch)</span>
+        </button>
+      </div>
+    </div>
+  </div>
 <div class="modal-overlay" id="renewalModal">
   <div class="modal-box">
     <div style="font-size: 30px; margin-bottom: 4px;">🌾</div>
@@ -1863,7 +1951,7 @@
 <div id="printContainer">
   
   <!-- TOP: TAX INVOICE (कर बीजक) -->
-  <div id="printableInvoice">
+  <div id="printableInvoice" style="display: none;">
     <div class="invoice-box">
       <div class="inv-header">
         <img id="printLogo" src="" style="display: none; max-height: 40px; max-width: 65px; margin-right: 8px;">
@@ -1952,12 +2040,12 @@
   </div>
 
   <!-- MIDDLE: SCISSOR CUT DIVIDER (SHOWN IN PRINT-BOTH MODE) -->
-  <div class="print-cut-line">
+  <div class="print-cut-line" style="display: none;">
     <span>✂ कट करा / CUT HERE (वरचा भाग: अधिकृत कर बीजक • खालचा भाग: ठेव जमा पावती) ✂</span>
   </div>
 
   <!-- BOTTOM: PAYMENT RECEIPT / ठेव जमा पावती (100% DYNAMIC TO KENDRA SETTINGS) -->
-  <div id="printableReceipt">
+  <div id="printableReceipt" style="display: none;">
     <div class="receipt-box">
       <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.2px solid #000; padding-bottom: 3px;">
         <img id="rcptLogo" src="" style="display: none; max-height: 38px; max-width: 60px; margin-right: 8px;">
@@ -5965,10 +6053,95 @@ var qrcode = function() {
     alert("✅ Kendra branding & UPI QR code settings saved successfully!");
   }
 
+  
+  // Show Initial Setup Modal if store details are not yet configured
+  function showInitialSetupModal() {
+    const s = getSettings();
+    const modal = document.getElementById('initialSetupModal');
+    if (!modal) return;
+    
+    // Pre-populate with existing if user previously edited
+    if (document.getElementById('setupKendraName')) document.getElementById('setupKendraName').value = (s.kendraName && s.kendraName !== "Kisan Krishi Seva Kendra") ? s.kendraName : "";
+    if (document.getElementById('setupOwnerName')) document.getElementById('setupOwnerName').value = s.ownerName || "";
+    if (document.getElementById('setupPhone')) document.getElementById('setupPhone').value = (s.phone && s.phone !== "9876543210") ? s.phone : "";
+    if (document.getElementById('setupTagline')) document.getElementById('setupTagline').value = s.tagline || "";
+    if (document.getElementById('setupAddress')) document.getElementById('setupAddress').value = (s.address && s.address !== "Near APMC Market Yard, Main Road, Shirpur, Dist. Dhule, Maharashtra") ? s.address : "";
+    if (document.getElementById('setupGstin')) document.getElementById('setupGstin').value = (s.gstin && s.gstin !== "27AABCK1234F1Z8") ? s.gstin : "";
+    if (document.getElementById('setupFertLic')) document.getElementById('setupFertLic').value = (s.fertLic && s.fertLic !== "FERT/MH/2024/9912") ? s.fertLic : "";
+    if (document.getElementById('setupPestLic')) document.getElementById('setupPestLic').value = (s.pestLic && s.pestLic !== "PEST/LIC/88120") ? s.pestLic : "";
+    if (document.getElementById('setupSeedLic')) document.getElementById('setupSeedLic').value = (s.seedLic && s.seedLic !== "SEED/MH/44129") ? s.seedLic : "";
+    if (document.getElementById('setupUpiId')) document.getElementById('setupUpiId').value = (s.upiId && s.upiId !== "kisan.kendra@ybl") ? s.upiId : "";
+    if (document.getElementById('setupUpiName')) document.getElementById('setupUpiName').value = s.upiName || "";
+
+    modal.style.display = 'flex';
+  }
+
+  // Save Initial Setup and Launch Software
+  function saveInitialSetupAndStart() {
+    const kName = document.getElementById('setupKendraName').value.trim();
+    const phone = document.getElementById('setupPhone').value.trim();
+    const address = document.getElementById('setupAddress').value.trim();
+
+    if (!kName) {
+      alert("⚠️ कृपया आपल्या कृषी केंद्राचे / दुकानाचे नाव प्रविष्ट करा!\n(Please enter Krishi Kendra Name)");
+      document.getElementById('setupKendraName').focus();
+      return;
+    }
+    if (!phone) {
+      alert("⚠️ कृपया आपला संपर्क / व्हॉट्सॲप मोबाईल नंबर प्रविष्ट करा!\n(Please enter Phone / WhatsApp number)");
+      document.getElementById('setupPhone').focus();
+      return;
+    }
+    if (!address) {
+      alert("⚠️ कृपया आपल्या दुकानाचा पत्ता प्रविष्ट करा!\n(Please enter Shop Address)");
+      document.getElementById('setupAddress').focus();
+      return;
+    }
+
+    const owner = document.getElementById('setupOwnerName').value.trim();
+    const tagline = document.getElementById('setupTagline').value.trim();
+    const gstin = document.getElementById('setupGstin').value.trim();
+    const fertLic = document.getElementById('setupFertLic').value.trim();
+    const pestLic = document.getElementById('setupPestLic').value.trim();
+    const seedLic = document.getElementById('setupSeedLic').value.trim();
+    const upiId = document.getElementById('setupUpiId').value.trim() || (phone + "@upi");
+    const upiName = document.getElementById('setupUpiName').value.trim() || kName;
+
+    const newSettings = {
+      kendraName: kName,
+      ownerName: owner,
+      tagline: tagline || "सर्व प्रकारची खते, बियाणे व कीटकनाशके विक्रेते",
+      phone: phone,
+      address: address,
+      gstin: gstin || "",
+      fertLic: fertLic || "",
+      pestLic: pestLic || "",
+      seedLic: seedLic || "",
+      upiId: upiId,
+      upiName: upiName
+    };
+
+    saveSettings(newSettings);
+    localStorage.setItem('kk_setup_done', 'true');
+    applySettingsToUI();
+
+    document.getElementById('initialSetupModal').style.display = 'none';
+    alert(`🎉 अभिनंदन! '${kName}' ची माहिती यशस्वीरित्या सेव्ह झाली आहे.\nआपले कृषी केंद्र बिलिंग सॉफ्टवेअर सुरू झाले आहे!`);
+
+    // Launch welcome tour if not completed
+    if (!localStorage.getItem('kk_tour_completed') && typeof showWelcomeModal === 'function') {
+      setTimeout(showWelcomeModal, 800);
+    }
+  }
+
   function applySettingsToUI() {
     const s = getSettings();
-    document.getElementById('navKendraName').innerText = s.kendraName;
-    document.getElementById('navLicenses').innerText = `Fert: ${s.fertLic} | Pest: ${s.pestLic} | Seeds: ${s.seedLic}`;
+    if (document.getElementById('navKendraName')) document.getElementById('navKendraName').innerText = s.kendraName;
+    if (document.getElementById('navLicenses')) document.getElementById('navLicenses').innerText = `Fert: ${s.fertLic || '-'} | Pest: ${s.pestLic || '-'} | Seeds: ${s.seedLic || '-'}`;
+    if (document.getElementById('printKendraName')) document.getElementById('printKendraName').innerText = s.kendraName;
+    if (document.getElementById('rcptKendraName')) document.getElementById('rcptKendraName').innerText = s.kendraName;
+    if (document.getElementById('flKendraName')) document.getElementById('flKendraName').innerText = s.kendraName;
+    if (document.getElementById('poKendraName')) document.getElementById('poKendraName').innerText = s.kendraName;
 
     document.getElementById('setKendraName').value = s.kendraName;
     document.getElementById('setTagline').value = s.tagline;
@@ -6868,8 +7041,10 @@ var qrcode = function() {
     checkSubscription();
     renderDashboard();
 
-    // First-Time User Interactive Tour Prompt
-    if (!localStorage.getItem('kk_tour_completed')) {
+    // First: Check if Krishi Kendra business details have been set up
+    if (!localStorage.getItem('kk_setup_done')) {
+      setTimeout(showInitialSetupModal, 400);
+    } else if (!localStorage.getItem('kk_tour_completed')) {
       setTimeout(showWelcomeModal, 1200);
     }
   };

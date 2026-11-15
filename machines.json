@@ -43,5 +43,21 @@
         "customReceiptFooter": "समर्थ कृषी सेवा केंद्र, नाशिक - शेतकऱ्यांची पहिली पसंती!"
       }
     }
+  },
+  "KK-LFJN-ZM": {
+    "patch": {
+      "patchId": "PATCH-2026-KK-LFJN-ZM-01",
+      "version": "v3.2.2-WIDE",
+      "title": "मशीन [KK-LFJN-ZM] साठी विस्तृत व सुस्पष्ट बिल पावती लेआउट (Expanded & Highly Visible Bill Layout)",
+      "releaseDate": "2026-11-15",
+      "readme": [
+        "बिलाची रुंदी (Width) वाढवली, जेणेकरून बिल आकुंचित (Compact) न दिसता कागदावर पूर्ण मोकळे व सुटसुटीत दिसेल.",
+        "फॉन्ट साईझ 9px वरून 11.5px पर्यंत वाढवली - सर्व मजकूर ठळक, स्पष्ट आणि वाचायला सोपा केला.",
+        "तक्त्यामधील (Items Table) प्रत्येक वस्तूचे नाव, HSN, बॅच आणि दर यातील पॅडिंग आणि ओळींमधील अंतर (Line Height) वाढवले.",
+        "कृषी केंद्राचे नाव (18px Bold), GSTIN, परवाने आणि संपर्क क्रमांक ठळक व आकर्षक केले.",
+        "बिलाखालील QR कोड, बँक खाते आणि शेतकरी माहिती स्पष्ट व ठळक चौकटीत दृश्यमान केली."
+      ],
+      "customCss": "body.print-both .invoice-box, body.print-invoice-only .invoice-box { width: 100% !important; max-width: 100% !important; padding: 12px 16px !important; font-size: 11px !important; line-height: 1.4 !important; } body.print-both .receipt-box, body.print-receipt-only .receipt-box { width: 100% !important; max-width: 100% !important; padding: 12px 16px !important; font-size: 11px !important; line-height: 1.4 !important; } #printKendraName, #rcptKendraName { font-size: 18px !important; font-weight: 800 !important; letter-spacing: 0.5px !important; } #printTagline, #rcptTagline { font-size: 11px !important; font-weight: 600 !important; } #printAddress, #rcptAddress { font-size: 10.5px !important; line-height: 1.35 !important; } .inv-title div, .receipt-box div { font-size: 10px !important; } .inv-table { width: 100% !important; border-collapse: collapse !important; margin: 8px 0 !important; } .inv-table th { padding: 6px 5px !important; font-size: 10.5px !important; font-weight: 700 !important; background: #f8fafc !important; } .inv-table td { padding: 5px 6px !important; font-size: 10.5px !important; line-height: 1.35 !important; } .inv-totals, .inv-summary { font-size: 11.5px !important; line-height: 1.5 !important; } @media print { @page { margin: 8mm !important; size: auto; } #printContainer { width: 100% !important; max-width: 100% !important; } }"
+    }
   }
 }

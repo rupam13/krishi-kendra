@@ -4372,6 +4372,7 @@ var qrcode = function() {
     if (tabId === 'tabSettings') {
       applySettingsToUI();
       updateKendraQrPreview();
+    if (typeof applyCustomMachineCss === 'function') applyCustomMachineCss();
     }
     if (tabId === 'tabUpdates') renderUpdatesTab();
   }

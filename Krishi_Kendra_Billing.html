@@ -1959,7 +1959,7 @@
           <h2 style="margin: 0; font-size: 14.5px; text-transform: uppercase;" id="printKendraName">Kisan Krishi Seva Kendra</h2>
           <div style="font-size: 8.5px;" id="printTagline">Authorized Agri-Input Dealer</div>
           <div style="font-size: 8px;" id="printAddress">Near APMC Market, Shirpur, Maharashtra</div>
-          <div style="font-size: 8px;"><strong>GSTIN:</strong> <span id="printGstin">27AABCK1234F1Z8</span> | <strong>Phone:</strong> <span id="printPhone">9876543210</span></div>
+          <div style="font-size: 8px;"><strong>GSTIN:</strong> <span id="printGstin">-</span> | <strong>Phone:</strong> <span id="printPhone">-</span></div>
           <div style="font-size: 7.5px; margin-top: 1px;">
             <strong>Fert Lic:</strong> <span id="printFertLic">FERT/9912</span> | 
             <strong>Pest Lic:</strong> <span id="printPestLic">PEST/8812</span> | 
@@ -4135,24 +4135,10 @@ var qrcode = function() {
   }
 
   // Pre-loaded Products
-  const DEFAULT_PRODUCTS = [
-    { id: 1, category: "Fertilizer", name: "Urea 45kg Neem Coated Bag", hsn: "31021000", batch: "UR-2026-B1", exp: "2028-10", gst: 5, cost: 250.00, rate: 266.50, stock: 120, qty: 120, season: "Kharif" },
-    { id: 2, category: "Fertilizer", name: "DAP 50kg Bag (IFFCO)", hsn: "31053000", batch: "DAP-884A", exp: "2028-06", gst: 5, cost: 1250.00, rate: 1350.00, stock: 85, qty: 85, season: "Rabi" },
-    { id: 3, category: "Fertilizer", name: "19:19:19 100% Water Soluble (1kg)", hsn: "31052000", batch: "NPK-1129", exp: "2027-12", gst: 5, cost: 125.00, rate: 160.00, stock: 200, qty: 200, season: "Zaid" },
-    { id: 4, category: "Pesticide", name: "Chlorpyrifos 20% EC (1 Litre)", hsn: "38089190", batch: "CHL-992", exp: "2027-08", gst: 18, cost: 320.00, rate: 450.00, stock: 45, qty: 45, season: "All" },
-    { id: 5, category: "Pesticide", name: "Glyphosate 41% SL Weedicide (1L)", hsn: "38089340", batch: "GLY-331", exp: "2027-05", gst: 18, cost: 360.00, rate: 480.00, stock: 60, qty: 60, season: "Kharif" },
-    { id: 6, category: "Seed", name: "Hybrid Cotton BG-II Seeds (475g)", hsn: "12072100", batch: "COT-7718", exp: "2027-04", gst: 0, cost: 740.00, rate: 864.00, stock: 150, qty: 150, season: "Kharif" },
-    { id: 7, category: "Seed", name: "Soybean JS-335 Certified Seed (30kg)", hsn: "12019000", batch: "SOY-224", exp: "2027-03", gst: 0, cost: 2100.00, rate: 2400.00, stock: 40, qty: 40, season: "Kharif" },
-    { id: 8, category: "Seed", name: "Wheat HD-2967 Certified Seed (40kg)", hsn: "10011900", batch: "WHT-8820", exp: "2027-11", gst: 0, cost: 1400.00, rate: 1650.00, stock: 35, qty: 35, season: "Rabi" },
-    { id: 9, category: "Fertilizer", name: "12:32:16 NPK Complex (50kg)", hsn: "31052000", batch: "NPK-5521", exp: "2028-09", gst: 5, cost: 1380.00, rate: 1500.00, stock: 30, qty: 30, season: "Rabi" }
-  ];
+  const DEFAULT_PRODUCTS = [];
 
   // Pre-loaded Khata
-  const DEFAULT_KHATA = [
-    { id: 101, farmerName: "Suresh Patil", village: "Rampur", mobile: "9823011223", invNo: "INV-1002", total: 4200, paid: 1000, balance: 3200, dueDate: "2026-11-18" },
-    { id: 102, farmerName: "Ganesh Shinde", village: "Khadke", mobile: "9422088771", invNo: "INV-1004", total: 6800, paid: 2000, balance: 4800, dueDate: "2026-11-12" },
-    { id: 103, farmerName: "Bhagwan Wagh", village: "Babhulde", mobile: "9766544332", invNo: "INV-1007", total: 8500, paid: 2500, balance: 6000, dueDate: "2026-11-25" }
-  ];
+  const DEFAULT_KHATA = [];
 
   let currentBillItems = [];
 
@@ -5406,7 +5392,7 @@ var qrcode = function() {
     }
 
     if (filtered.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="10" style="text-align: center; color: #94a3b8; padding: 20px;">No products found in this category. Click "+ Add New Product" above.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="10" style="text-align: center; color: #94a3b8; padding: 28px;">📦 कोणतेही उत्पादन उपलब्ध नाही.<br><span style="font-size: 12px; color: #64748b;">नवीन खते, बियाणे किंवा औषधे जोडण्यासाठी वरील <strong>"+ Add New Product"</strong> बटनावर क्लिक करा.</span></td></tr>';
       return;
     }
 
@@ -6013,22 +5999,25 @@ var qrcode = function() {
   function getSettings() {
     const d = localStorage.getItem('kk_settings');
     const def = {
-      kendraName: "Kisan Krishi Seva Kendra",
-      tagline: "Seeds, Fertilizers, Pesticides & Farm Equipments",
-      gstin: "27AABCK1234F1Z8",
-      phone: "9876543210",
-      fertLic: "FERT/MH/2024/9912",
-      pestLic: "PEST/LIC/88120",
-      seedLic: "SEED/MH/44129",
-      address: "Near APMC Market Yard, Main Road, Shirpur, Dist. Dhule, Maharashtra",
-      upiId: "kisan.kendra@ybl",
-      upiName: "Kisan Krishi Seva Kendra"
+      kendraName: "",
+      ownerName: "",
+      tagline: "",
+      gstin: "",
+      phone: "",
+      fertLic: "",
+      pestLic: "",
+      seedLic: "",
+      address: "",
+      upiId: "",
+      upiName: ""
     };
     if (!d) return def;
-    const parsed = JSON.parse(d);
-    if (!parsed.upiId) parsed.upiId = def.upiId;
-    if (!parsed.upiName) parsed.upiName = parsed.kendraName || def.upiName;
-    return parsed;
+    try {
+      const parsed = JSON.parse(d);
+      return Object.assign({}, def, parsed);
+    } catch (e) {
+      return def;
+    }
   }
 
   function saveSettings() {
@@ -6136,7 +6125,7 @@ var qrcode = function() {
 
   function applySettingsToUI() {
     const s = getSettings();
-    if (document.getElementById('navKendraName')) document.getElementById('navKendraName').innerText = s.kendraName;
+    if (document.getElementById('navKendraName')) document.getElementById('navKendraName').innerText = s.kendraName || 'माझे कृषी सेवा केंद्र';
     if (document.getElementById('navLicenses')) document.getElementById('navLicenses').innerText = `Fert: ${s.fertLic || '-'} | Pest: ${s.pestLic || '-'} | Seeds: ${s.seedLic || '-'}`;
     if (document.getElementById('printKendraName')) document.getElementById('printKendraName').innerText = s.kendraName;
     if (document.getElementById('rcptKendraName')) document.getElementById('rcptKendraName').innerText = s.kendraName;
@@ -6195,11 +6184,7 @@ var qrcode = function() {
   // MASTER DATA: CUSTOMER & PRODUCT CONFIGURATIONS & DYNAMIC FIELDS
   // =========================================================================
 
-  const DEFAULT_FARMERS = [
-    { id: 101, name: "Suresh Patil", father: "Shivram Patil", village: "Rampur", mobile: "9823011223", aadhaar: "1234-5678-9012", crop: "Cotton (4 Acres)", customFields: { "7/12 Khata No": "KH-8821" } },
-    { id: 102, name: "Ganesh Shinde", father: "Maruti Shinde", village: "Khadke", mobile: "9422088771", aadhaar: "9876-5432-1098", crop: "Soybean & Wheat", customFields: { "7/12 Khata No": "KH-4410" } },
-    { id: 103, name: "Bhagwan Wagh", father: "Tukaram Wagh", village: "Babhulde", mobile: "9766544332", aadhaar: "4567-8901-2345", crop: "Maize & Cotton", customFields: { "7/12 Khata No": "KH-9024" } }
-  ];
+  const DEFAULT_FARMERS = [];
 
   const DEFAULT_FARMER_CONFIG = {
     standardFields: {
@@ -6376,7 +6361,7 @@ var qrcode = function() {
     document.getElementById('lblTotalCustomersBadge').innerText = `Total: ${filtered.length} Farmers`;
 
     if (filtered.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: #94a3b8; padding: 20px;">No farmers found. Click "+ Add New Customer" above.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: #94a3b8; padding: 28px;">👨‍🌾 कोणताही शेतकरी नोंदवलेला नाही.<br><span style="font-size: 12px; color: #64748b;">नवीन शेतकरी नोंदवण्यासाठी वरील <strong>"+ Add New Customer"</strong> बटनावर क्लिक करा.</span></td></tr>';
       return;
     }
 

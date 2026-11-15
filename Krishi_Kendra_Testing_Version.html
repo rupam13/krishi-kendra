@@ -507,8 +507,8 @@
   <div class="brand">
     <img id="navLogo" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2315803d'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z'/%3E%3C/svg%3E">
     <div class="brand-text">
-      <h2 id="navKendraName">Kisan Krishi Seva Kendra</h2>
-      <small id="navLicenses">Fert: FERT/MH/2024/9912 | Pest: PEST/LIC/88120 | Seeds: SEED/MH/44129</small>
+      <h2 id="navKendraName" onclick="showInitialSetupModal()" style="cursor: pointer;" title="आपल्या कृषी केंद्राचे नाव व माहिती भरण्यासाठी येथे क्लिक करा (Click to Set Up Store Details)">माझे कृषी सेवा केंद्र ✏️</h2>
+      <small id="navLicenses">Fert: - | Pest: - | Seeds: -</small>
     </div>
   </div>
   
@@ -1458,7 +1458,7 @@
 <!-- SUBSCRIPTION RENEWAL MODAL WITH USER'S UPI ID -->
 
   <!-- INITIAL ONBOARDING SETUP MODAL (पहिल्यांदा सुरू करताना केंद्र माहिती पॉप-अप) -->
-  <div class="modal-overlay" id="initialSetupModal" style="display: none; z-index: 999999; backdrop-filter: blur(6px); background: rgba(15, 23, 42, 0.85);">
+  <div class="modal-overlay" id="initialSetupModal" style="z-index: 999999; backdrop-filter: blur(6px); background: rgba(15, 23, 42, 0.85);">
     <div class="modal-box" style="max-width: 650px; width: 95%; max-height: 90vh; overflow-y: auto; text-align: left; padding: 26px 24px; border-radius: 16px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4); border-top: 5px solid #16a34a; background: #ffffff;">
       <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px; border-bottom: 1px solid #e2e8f0; padding-bottom: 12px;">
         <div style="font-size: 38px;">🌾</div>
@@ -6066,7 +6066,7 @@ var qrcode = function() {
     if (!modal) return;
     
     // Pre-populate with existing if user previously edited
-    if (document.getElementById('setupKendraName')) document.getElementById('setupKendraName').value = (s.kendraName && s.kendraName !== "Kisan Krishi Seva Kendra") ? s.kendraName : "";
+    if (document.getElementById('setupKendraName')) document.getElementById('setupKendraName').value = (s.kendraName && s.kendraName !== "माझे कृषी सेवा केंद्र" && s.kendraName !== "Kisan Krishi Seva Kendra") ? s.kendraName : "";
     if (document.getElementById('setupOwnerName')) document.getElementById('setupOwnerName').value = s.ownerName || "";
     if (document.getElementById('setupPhone')) document.getElementById('setupPhone').value = (s.phone && s.phone !== "9876543210") ? s.phone : "";
     if (document.getElementById('setupTagline')) document.getElementById('setupTagline').value = s.tagline || "";
@@ -6078,6 +6078,7 @@ var qrcode = function() {
     if (document.getElementById('setupUpiId')) document.getElementById('setupUpiId').value = (s.upiId && s.upiId !== "kisan.kendra@ybl") ? s.upiId : "";
     if (document.getElementById('setupUpiName')) document.getElementById('setupUpiName').value = s.upiName || "";
 
+    modal.classList.add('active');
     modal.style.display = 'flex';
   }
 
@@ -6130,7 +6131,7 @@ var qrcode = function() {
     localStorage.setItem('kk_setup_done', 'true');
     applySettingsToUI();
 
-    document.getElementById('initialSetupModal').style.display = 'none';
+    const m = document.getElementById('initialSetupModal'); if (m) { m.classList.remove('active'); m.style.display = 'none'; }
     alert(`🎉 अभिनंदन! '${kName}' ची माहिती यशस्वीरित्या सेव्ह झाली आहे.\nआपले कृषी केंद्र बिलिंग सॉफ्टवेअर सुरू झाले आहे!`);
 
     // Launch welcome tour if not completed
@@ -7043,8 +7044,17 @@ var qrcode = function() {
     renderDashboard();
 
     // First: Check if Krishi Kendra business details have been set up
-    if (!localStorage.getItem('kk_setup_done')) {
-      setTimeout(showInitialSetupModal, 400);
+    const currSettings = getSettings();
+    const needsSetup = !localStorage.getItem('kk_setup_done') || 
+                       !currSettings.kendraName || 
+                       currSettings.kendraName.trim() === '' || 
+                       currSettings.kendraName === 'माझे कृषी सेवा केंद्र' || 
+                       currSettings.kendraName === 'Kisan Krishi Seva Kendra' || 
+                       !currSettings.phone || 
+                       currSettings.phone.trim() === '';
+
+    if (needsSetup) {
+      setTimeout(showInitialSetupModal, 300);
     } else if (!localStorage.getItem('kk_tour_completed')) {
       setTimeout(showWelcomeModal, 1200);
     }

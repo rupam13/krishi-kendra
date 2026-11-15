@@ -1555,9 +1555,17 @@
         </div>
 
         <div class="form-group" style="margin-bottom: 12px;">
-          <label style="font-size: 12px; font-weight: bold; color: #1e293b;">स्मरणपत्र मजकूर / Caption (फोटो सोबत जाणारा मेसेज):</label>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; flex-wrap: wrap; gap: 6px;">
+            <label style="font-size: 12px; font-weight: bold; color: #1e293b; margin: 0;">स्मरणपत्र मजकूर / Caption (फोटो सोबत जाणारा मेसेज):</label>
+            <div style="display: flex; gap: 4px; align-items: center;">
+              <span style="font-size: 11px; color: #64748b; font-weight: 500;">🌐 भाषा:</span>
+              <button type="button" id="waLangBtn_mr" class="btn btn-outline" style="padding: 2px 7px; font-size: 11px; border-radius: 4px; cursor: pointer;" onclick="switchWaModalLanguage('mr')">मराठी</button>
+              <button type="button" id="waLangBtn_hi" class="btn btn-outline" style="padding: 2px 7px; font-size: 11px; border-radius: 4px; cursor: pointer;" onclick="switchWaModalLanguage('hi')">हिंदी</button>
+              <button type="button" id="waLangBtn_en" class="btn btn-outline" style="padding: 2px 7px; font-size: 11px; border-radius: 4px; cursor: pointer;" onclick="switchWaModalLanguage('en')">English</button>
+            </div>
+          </div>
           <textarea id="waModalCaptionText" rows="7" class="form-control" style="font-size: 12px; line-height: 1.45; resize: vertical; font-family: inherit; padding: 8px;" placeholder="मजकूर..."></textarea>
-          <small style="color: #64748b; font-size: 10.5px;">टीप: आपण वरील मेसेजमध्ये आवश्यकतेनुसार बदल करू शकता.</small>
+          <small style="color: #64748b; font-size: 10.5px;">टीप: आपण वरील मेसेजमध्ये आवश्यकतेनुसार बदल करू शकता किंवा भाषा बदलू शकता.</small>
         </div>
 
         <!-- Primary Action Button -->
@@ -3831,17 +3839,98 @@ var qrcode = function() {
 
   let currentLang = 'hi';
 
+  function getWaTemplateForLang(lang) {
+    lang = lang || currentLang || 'mr';
+    const custom = localStorage.getItem('kk_wa_custom_' + lang);
+    if (custom && custom.trim()) return custom;
+    return (I18N[lang] && I18N[lang].defaultWaTemplate) || I18N.mr.defaultWaTemplate;
+  }
+
+  function generateWaReminderMessage(k, lang) {
+    if (!k) return '';
+    lang = lang || currentLang || 'mr';
+    const settings = getSettings();
+    const kendraUpi = settings.upiId || 'kisan.kendra@ybl';
+    const kendraPayee = settings.upiName || settings.kendraName || 'Kisan Krishi Seva Kendra';
+    const template = getWaTemplateForLang(lang);
+
+    let msg = template
+      .replace(/{farmer_name}/g, k.farmerName || 'शेतकरी')
+      .replace(/{amount}/g, k.balance || 0)
+      .replace(/{due_date}/g, k.dueDate || '-')
+      .replace(/{bill_no}/g, k.invNo || '-')
+      .replace(/{kendra}/g, settings.kendraName || 'कृषी सेवा केंद्र')
+      .replace(/{phone}/g, settings.phone || '')
+      .replace(/{upi_id}/g, kendraUpi)
+      .replace(/{upi_name}/g, kendraPayee);
+
+    msg = msg
+      .replace(/https?:\/\/api\.qrserver\.com[^\s\n]*/gi, '')
+      .replace(/📲\s*(?:Scan QR to Pay|QR कोड स्कॅन करून[^\n]*):\s*/gi, '')
+      .replace(/{qr_link}/g, '')
+      .replace(/\n{3,}/g, '\n\n')
+      .trim();
+    return msg;
+  }
+
+  function updateWaLangPills(lang) {
+    lang = lang || currentLang || 'mr';
+    ['mr', 'hi', 'en'].forEach(l => {
+      const btn = document.getElementById('waLangBtn_' + l);
+      if (btn) {
+        if (l === lang) {
+          btn.style.background = '#166534';
+          btn.style.color = '#ffffff';
+          btn.style.borderColor = '#166534';
+          btn.style.fontWeight = 'bold';
+        } else {
+          btn.style.background = '#ffffff';
+          btn.style.color = '#334155';
+          btn.style.borderColor = '#cbd5e1';
+          btn.style.fontWeight = 'normal';
+        }
+      }
+    });
+  }
+
+  function switchWaModalLanguage(lang) {
+    currentLang = lang;
+    const langSel = document.getElementById('langSelect');
+    if (langSel) langSel.value = lang;
+    changeLanguage(lang);
+  }
+
   function changeLanguage(lang) {
     currentLang = lang;
     localStorage.setItem('kk_lang', lang);
     const dict = I18N[lang];
-    for (let key in dict) {
-      const el = document.getElementById(key);
-      if (el) el.innerText = dict[key];
+    if (dict) {
+      for (let key in dict) {
+        const el = document.getElementById(key);
+        if (el) el.innerText = dict[key];
+      }
     }
-    if (!localStorage.getItem('kk_wa_custom')) {
-      document.getElementById('setWaTemplate').value = dict.defaultWaTemplate;
+    
+    // Sync header dropdown if different
+    const langSel = document.getElementById('langSelect');
+    if (langSel && langSel.value !== lang) {
+      langSel.value = lang;
     }
+
+    // Keep Settings template in sync with active language
+    const setWaEl = document.getElementById('setWaTemplate');
+    if (setWaEl) {
+      setWaEl.value = getWaTemplateForLang(lang);
+    }
+
+    // If WhatsApp Reminder Modal is currently active/open, update caption immediately!
+    if (currentWaKhataRecord) {
+      const captionArea = document.getElementById('waModalCaptionText');
+      if (captionArea) {
+        captionArea.value = generateWaReminderMessage(currentWaKhataRecord, lang);
+      }
+    }
+    updateWaLangPills(lang);
   }
 
   // Pre-loaded Products
@@ -4224,6 +4313,7 @@ var qrcode = function() {
   let currentWaFarmerName = "";
   let currentWaInvNo = "";
   let currentWaDueAmt = 0;
+  let currentWaKhataRecord = null;
 
   function drawRoundedRect(ctx, x, y, width, height, radius) {
     if (ctx.roundRect) {
@@ -4486,33 +4576,14 @@ var qrcode = function() {
       phoneInput.value = farmerPhone;
     }
 
-    // 2. CLEAN CAPTION TEMPLATE (NO MORE api.qrserver.com URL!)
-    let template = (document.getElementById('setWaTemplate') && document.getElementById('setWaTemplate').value) ||
-      (I18N[currentLang] && I18N[currentLang].defaultWaTemplate) ||
-      "नमस्कार {farmer_name} जी 🙏, {kendra} मधून आपले बिल नं {bill_no} चे एकूण ₹{amount} येणे बाकी आहे. देय तारीख {due_date} आहे.\n\n💳 UPI ID: {upi_id} ({upi_name})\n\nकृपया सोबत जोडलेला QR कोड फोटो स्कॅन करून किंवा UPI ID द्वारे लवकरात लवकर जमा करावे. फोन: {phone}.";
+    currentWaKhataRecord = k;
 
-    let msg = template
-      .replace(/{farmer_name}/g, k.farmerName)
-      .replace(/{amount}/g, k.balance)
-      .replace(/{due_date}/g, k.dueDate)
-      .replace(/{bill_no}/g, k.invNo)
-      .replace(/{kendra}/g, settings.kendraName)
-      .replace(/{phone}/g, settings.phone)
-      .replace(/{upi_id}/g, kendraUpi)
-      .replace(/{upi_name}/g, kendraPayee);
-
-    // Thoroughly strip any residual api.qrserver.com or {qr_link} URLs from saved templates
-    msg = msg
-      .replace(/https?:\/\/api\.qrserver\.com[^\s\n]*/gi, '')
-      .replace(/📲\s*(?:Scan QR to Pay|QR कोड स्कॅन करून[^\n]*):\s*/gi, '')
-      .replace(/{qr_link}/g, '')
-      .replace(/\n{3,}/g, '\n\n')
-      .trim();
-
+    // 2. CLEAN CAPTION TEMPLATE IN ACTIVE LANGUAGE
     const captionArea = document.getElementById('waModalCaptionText');
     if (captionArea) {
-      captionArea.value = msg;
+      captionArea.value = generateWaReminderMessage(k, currentLang);
     }
+    updateWaLangPills(currentLang);
 
     // Show modal
     const modal = document.getElementById('waReminderModal');
@@ -4543,6 +4614,7 @@ var qrcode = function() {
   function closeWaReminderModal() {
     const modal = document.getElementById('waReminderModal');
     if (modal) modal.style.display = 'none';
+    currentWaKhataRecord = null;
   }
 
   async function shareWaQrWithCaption() {
@@ -5691,7 +5763,9 @@ var qrcode = function() {
       upiName: (document.getElementById('setUpiName') ? document.getElementById('setUpiName').value.trim() : '') || document.getElementById('setKendraName').value
     };
     localStorage.setItem('kk_settings', JSON.stringify(s));
-    localStorage.setItem('kk_wa_custom', document.getElementById('setWaTemplate').value);
+    const customTpl = document.getElementById('setWaTemplate').value;
+    localStorage.setItem('kk_wa_custom_' + currentLang, customTpl);
+    localStorage.setItem('kk_wa_custom', customTpl);
     applySettingsToUI();
     updateKendraQrPreview();
     alert("✅ Kendra branding & UPI QR code settings saved successfully!");
@@ -5714,7 +5788,7 @@ var qrcode = function() {
     if (document.getElementById('setUpiName')) document.getElementById('setUpiName').value = s.upiName || s.kendraName || 'Kisan Krishi Seva Kendra';
     updateKendraQrPreview();
 
-    let savedWa = localStorage.getItem('kk_wa_custom') || I18N[currentLang].defaultWaTemplate;
+    let savedWa = getWaTemplateForLang(currentLang);
     if (savedWa && (savedWa.includes('api.qrserver.com') || savedWa.includes('{qr_link}'))) {
       savedWa = savedWa
         .replace(/https?:\/\/api\.qrserver\.com[^\s\n]*/gi, '')
@@ -5722,6 +5796,7 @@ var qrcode = function() {
         .replace(/{qr_link}/g, '')
         .replace(/\n{3,}/g, '\n\n')
         .trim();
+      localStorage.setItem('kk_wa_custom_' + currentLang, savedWa);
       localStorage.setItem('kk_wa_custom', savedWa);
     }
     document.getElementById('setWaTemplate').value = savedWa;

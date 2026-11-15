@@ -470,6 +470,11 @@
   
   <div class="nav-controls">
     <!-- Language Selector -->
+    <!-- Quick Guided Tour Button -->
+    <button type="button" class="btn btn-outline" style="background: rgba(255,255,255,0.15); color: white; border-color: rgba(255,255,255,0.35); padding: 5px 11px; font-size: 11.5px; font-weight: bold; border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; transition: all 0.2s;" onclick="startInteractiveTour(true)" title="सॉफ्टवेअर कसे वापरावे ते शिका (Interactive Guided Tour)">
+      💡 <span>मार्गदर्शिका (Tour)</span>
+    </button>
+
     <select class="lang-select" id="langSelect" onchange="changeLanguage(this.value)">
       <option value="en">🌐 English</option>
       <option value="hi" selected>🌐 हिंदी (Hindi)</option>
@@ -1741,6 +1746,85 @@
       </div>
     </div>
 
+  </div>
+</div>
+
+
+<!-- =========================================================================
+     INTERACTIVE PRODUCT TOUR & ONBOARDING SYSTEM
+     ========================================================================= -->
+<!-- 1. First-Time Welcome Modal -->
+<div class="modal-overlay" id="welcomeTourModal" style="display: none; z-index: 99990;">
+  <div class="modal-box" style="max-width: 540px; text-align: center; padding: 24px 22px; border-radius: 14px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.25);">
+    <div style="font-size: 42px; margin-bottom: 6px;">🌱</div>
+    <h3 style="color: #166534; font-size: 20px; margin-bottom: 6px;" id="tourWelcomeTitle">
+      अक्षय कृषी सेवा केंद्र सॉफ्टवेअरमध्ये आपले स्वागत आहे!
+    </h3>
+    <p style="color: #64748b; font-size: 13px; line-height: 1.5; margin-bottom: 16px;" id="tourWelcomeSub">
+      Welcome to Krishi Kendra Enterprise Billing POS. अवघ्या ९० सेकंदात सॉफ्टवेअरची मुख्य वैशिष्ट्ये (GST बिलिंग, उधारी खातावही, व्हॉट्सॲप QR आणि हंगाम अंदाज) समजून घ्या!
+    </p>
+
+    <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 12px 14px; margin-bottom: 18px; text-align: left; font-size: 12px; color: #166534; line-height: 1.55;">
+      <strong>🌟 या टूरमध्ये आपण काय पाहाल:</strong><br>
+      • 🧾 <strong>GST बिलिंग:</strong> खते, औषधे व बियाण्यांचे १-क्लिक A4/थर्मल बिल<br>
+      • 📲 <strong>व्हॉट्सॲप QR:</strong> शेतकऱ्याला फोटोसह देय रकमेचे स्मरणपत्र<br>
+      • 📦 <strong>हंगामी अंदाज:</strong> खरीप व रब्बी मालाचा आगाऊ स्टॉक अंदाज व PO<br>
+      • ⚙️ <strong>ब्रँडिंग:</strong> स्वतःच्या दुकानाचे नाव, परवाने व QR सेटिंग्स
+    </div>
+
+    <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+      <button class="btn btn-primary" style="padding: 10px 22px; font-size: 13.5px; font-weight: bold; background: #16a34a; border-color: #15803d; box-shadow: 0 4px 6px -1px rgba(22, 163, 74, 0.3);" onclick="startInteractiveTour(true)">
+        🚀 हो, टूर सुरू करा (Start Tour)
+      </button>
+      <button class="btn btn-outline" style="padding: 10px 18px; font-size: 13px;" onclick="dismissWelcomeModal()">
+        मी स्वतः एक्सप्लोर करतो (Skip)
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- 2. Interactive Spotlight Backdrop & Floating Popover -->
+<div id="tourOverlay" style="display: none; position: fixed; inset: 0; z-index: 99998; pointer-events: none;">
+  <!-- Dark Backdrop with Cutout Spotlight -->
+  <div id="tourSpotlight" style="position: absolute; border: 2.5px solid #22c55e; border-radius: 8px; box-shadow: 0 0 0 9999px rgba(15, 23, 42, 0.76), 0 0 20px 4px rgba(34, 197, 94, 0.6); transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1); pointer-events: auto;"></div>
+
+  <!-- Floating Tour Card -->
+  <div id="tourTooltip" style="position: absolute; width: 340px; max-width: 90vw; background: white; border-radius: 12px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.25), 0 8px 10px -6px rgba(0,0,0,0.1); border: 1.5px solid #bbf7d0; z-index: 100000; padding: 16px 18px; pointer-events: auto; transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1); font-family: inherit;">
+    <!-- Step Header -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+      <span id="tourStepBadge" style="background: #dcfce7; color: #166534; font-size: 11px; font-weight: bold; padding: 3px 8px; border-radius: 999px; border: 1px solid #86efac;">
+        पायरी १ / ७
+      </span>
+      <button style="background: none; border: none; font-size: 16px; color: #94a3b8; cursor: pointer; padding: 2px 6px;" onclick="endInteractiveTour()" title="टूर बंद करा (Close)">✕</button>
+    </div>
+
+    <!-- Title & Body -->
+    <h4 id="tourStepTitle" style="margin: 0 0 6px 0; font-size: 14.5px; color: #0f172a; line-height: 1.35;">
+      शीर्षक
+    </h4>
+    <p id="tourStepDesc" style="margin: 0 0 10px 0; font-size: 12px; color: #475569; line-height: 1.5;">
+      वर्णन...
+    </p>
+
+    <!-- Interactive Hint / Tip -->
+    <div id="tourStepHint" style="background: #f8fafc; border-left: 3px solid #16a34a; padding: 6px 10px; font-size: 11px; color: #334155; margin-bottom: 14px; border-radius: 0 6px 6px 0;">
+      💡 टीप...
+    </div>
+
+    <!-- Footer Controls -->
+    <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f1f5f9; padding-top: 10px;">
+      <div id="tourDots" style="display: flex; gap: 4px;">
+        <!-- Dots rendered dynamically -->
+      </div>
+      <div style="display: flex; gap: 6px;">
+        <button id="tourPrevBtn" class="btn btn-outline" style="padding: 4px 10px; font-size: 11.5px;" onclick="prevTourStep()">
+          ◀ मागे
+        </button>
+        <button id="tourNextBtn" class="btn btn-primary" style="padding: 4px 14px; font-size: 11.5px; background: #16a34a; border-color: #15803d;" onclick="nextTourStep()">
+          पुढे ▶
+        </button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -6307,6 +6391,357 @@ var qrcode = function() {
     document.getElementById('patchCodeInput').value = '';
   }
 
+
+  // =========================================================================
+  // INTERACTIVE PRODUCT TOUR & ONBOARDING ENGINE
+  // =========================================================================
+
+  const TOUR_STEPS = {
+    mr: [
+      {
+        tab: 'tabDashboard',
+        target: '.navbar',
+        badge: 'पायरी १ / ७',
+        title: '🏢 केंद्र ओळख, भाषा आणि मोफत चाचणी',
+        desc: 'येथून आपण मराठी, हिंदी किंवा इंग्रजी भाषा बदलू शकता. आपला युनिक Machine ID आणि २ महिन्यांची मोफत चाचणी वैधता येथे दिसते.',
+        hint: '💡 भाषा किंवा सेटिंग्ज बदलण्यासाठी वरील भाषा निवडक वापरा.'
+      },
+      {
+        tab: 'tabDashboard',
+        target: '#tabDashboard',
+        badge: 'पायरी २ / ७',
+        title: '📊 व्यवसाय डॅशबोर्ड (Live Business Overview)',
+        desc: 'या महिन्याची एकूण विक्री, येणे बाकी उधारी, वसूल झालेली रक्कम आणि अंदाजे निव्वळ नफा रिअल-टाइममध्ये येथे दिसतो.',
+        hint: '💡 प्रत्येक बिलासोबत नफा आणि उधारी आपोआप कॅल्क्युलेट होते.'
+      },
+      {
+        tab: 'tabBilling',
+        target: '#mBilling',
+        badge: 'पायरी ३ / ७',
+        title: '🧾 नवीन GST इनव्हॉइस (Quick Bill Generation)',
+        desc: 'शेतकऱ्याचे नाव निवडा, खते (५%), औषधे (१८%) किंवा बियाणे (०% GST) जोडा. रोख किंवा उधारी निवडून १-क्लिक A4 टॅक्स बिल किंवा ३-इंच पावती प्रिंट करा!',
+        hint: '💡 पावतीवर तुमचे खत, औषध व बियाणे परवाना क्रमांक आपोआप छापले जातात.'
+      },
+      {
+        tab: 'tabKhata',
+        target: '#mKhata',
+        badge: 'पायरी ४ / ७',
+        title: '🌾 शेतकरी खातावही व व्हॉट्सॲप QR (Udhar & WhatsApp)',
+        desc: 'कोणाकडे किती पैसे बाकी आहेत ते एका नजरेत पाहा. "📲 WhatsApp" बटण दाबून शेतकऱ्याला थेट UPI QR फोटो आणि देय तारखेचा मेसेज पाठवा.',
+        hint: '💡 व्हॉट्सॲप मेसेज मराठी, हिंदी किंवा इंग्रजीत १-क्लिकमध्ये बदलता येतो!'
+      },
+      {
+        tab: 'tabInventory',
+        target: '#mInventory',
+        badge: 'पायरी ५ / ७',
+        title: '📦 माल साठा आणि हंगामी अंदाज (Inventory & Forecasting)',
+        desc: 'खरीप, रब्बी किंवा उन्हाळी हंगामात कोणत्या खतांची किंवा औषधांची जास्त मागणी असेल याचा अंदाज घ्या आणि १-क्लिक होलसेल खरेदी ऑर्डर (PO) तयार करा.',
+        hint: '💡 क्रिटिकल स्टॉक संपण्यापूर्वीच सॉफ्टवेअर री-ऑर्डरचा इशारा देते.'
+      },
+      {
+        tab: 'tabHistory',
+        target: '#mHistory',
+        badge: 'पायरी ६ / ७',
+        title: '📜 जुनी बिले आणि शेतकरी ३६०° नफा प्रोफाइल (Farmer 360°)',
+        desc: 'कोणत्याही जुन्या बिलाचा शोध घ्या. शेतकऱ्याच्या नावावर क्लिक केल्यास त्याचा संपूर्ण इतिहास, त्याने काय खरेदी केले आणि त्याच्याकडून किती नफा झाला हे समजते.',
+        hint: '💡 नियमित खरेदी करणाऱ्या विश्वासू शेतकऱ्यांना लॉयल्टी बॅज मिळतो.'
+      },
+      {
+        tab: 'tabSettings',
+        target: '#mSettings',
+        badge: 'पायरी ७ / ७',
+        title: '⚙️ केंद्र ब्रँडिंग, UPI QR व सॉफ्टवेअर अपडेट्स (Kendra Settings)',
+        desc: 'आपल्या दुकानाचे नाव, पत्ता, खत/औषध परवाने, UPI ID आणि लोगो सेट करा. तसेच येथून गिटहबवरून १-क्लिक अपडेट्सही मिळवता येतात!',
+        hint: '💡 अभिनंदन! आपण आता सॉफ्टवेअर वापरण्यास पूर्णपणे सज्ज आहात.'
+      }
+    ],
+    hi: [
+      {
+        tab: 'tabDashboard',
+        target: '.navbar',
+        badge: 'चरण १ / ७',
+        title: '🏢 केंद्र पहचान, भाषा और नि:शुल्क परीक्षण',
+        desc: 'यहाँ से आप मराठी, हिंदी या अंग्रेजी भाषा बदल सकते हैं। आपकी मशीन आईडी और २ महीने का फ्री ट्रायल स्टेटस यहाँ दिखाई देता है।',
+        hint: '💡 भाषा बदलने के लिए ऊपर दिए गए ड्रॉपडाउन का उपयोग करें।'
+      },
+      {
+        tab: 'tabDashboard',
+        target: '#tabDashboard',
+        badge: 'चरण २ / ७',
+        title: '📊 बिजनेस डैशबोर्ड (Live Overview)',
+        desc: 'इस महीने की कुल बिक्री, बकाया उधार, वसूली राशि और शुद्ध मुनाफा रियल-टाइम में यहाँ देखें।',
+        hint: '💡 प्रत्येक बिल के साथ मुनाफा और उधार अपने आप अपडेट होता है।'
+      },
+      {
+        tab: 'tabBilling',
+        target: '#mBilling',
+        badge: 'चरण ३ / ७',
+        title: '🧾 नया GST इनवॉइस (Quick Billing)',
+        desc: 'किसान का नाम चुनें, खाद (5%), कीटनाशक (18%) या बीज (0% GST) जोड़ें। नकद या उधार चुनकर तुरंत A4 या 3-इंच रसीद प्रिंट करें।',
+        hint: '💡 बिल पर आपके खाद, कीटनाशक और बीज लाइसेंस नंबर अपने आप प्रिंट होते हैं।'
+      },
+      {
+        tab: 'tabKhata',
+        target: '#mKhata',
+        badge: 'चरण ४ / ७',
+        title: '🌾 किसान उधार / खाता और WhatsApp QR',
+        desc: 'किस किसान पर कितना उधार बाकी है, यह एक नज़र में देखें। "📲 WhatsApp" बटन दबाकर सीधे UPI QR फोटो और रिमाइंडर भेजें।',
+        hint: '💡 वॉट्सऐप मैसेज मराठी, हिंदी या अंग्रेजी में तुरंत बदला जा सकता है!'
+      },
+      {
+        tab: 'tabInventory',
+        target: '#mInventory',
+        badge: 'चरण ५ / ७',
+        title: '📦 स्टॉक और मौसमी मांग पूर्वानुमान (Forecasting)',
+        desc: 'खरीफ, रबी या जायद सीजन में किस सामान की ज्यादा मांग होगी इसका पूर्वानुमान देखें और 1-क्लिक में होलसेल परचेज ऑर्डर बनाएं।',
+        hint: '💡 स्टॉक खत्म होने से पहले ही सिस्टम आपको री-ऑर्डर का अलर्ट देता है।'
+      },
+      {
+        tab: 'tabHistory',
+        target: '#mHistory',
+        badge: 'चरण ६ / ७',
+        title: '📜 पुराने बिल और किसान 360° प्रोफाइल',
+        desc: 'पुराने बिल खोजें। किसान के नाम पर क्लिक करके उसका पूरा खरीद इतिहास और उससे हुआ कुल मुनाफा देखें।',
+        hint: '💡 नियमित खरीदारी करने वाले किसानों को लॉयल्टी बैज मिलता है।'
+      },
+      {
+        tab: 'tabSettings',
+        target: '#mSettings',
+        badge: 'चरण ७ / ७',
+        title: '⚙️ केंद्र सेटिंग्स, UPI QR और अपडेट्स',
+        desc: 'अपनी दुकान का नाम, पता, लाइसेंस नंबर, UPI ID और लोगो सेट करें। यहाँ से GitHub द्वारा 1-क्लिक अपडेट्स भी पा सकते हैं।',
+        hint: '💡 बधाई! अब आप सॉफ्टवेयर का उपयोग करने के लिए पूरी तरह तैयार हैं।'
+      }
+    ],
+    en: [
+      {
+        tab: 'tabDashboard',
+        target: '.navbar',
+        badge: 'Step 1 of 7',
+        title: '🏢 Store Identity, Language & Free Trial',
+        desc: 'Switch between Marathi, Hindi, or English. Your unique Machine ID and 2-Month Free Trial status are displayed here.',
+        hint: '💡 Use the language selector to switch languages anytime.'
+      },
+      {
+        tab: 'tabDashboard',
+        target: '#tabDashboard',
+        badge: 'Step 2 of 7',
+        title: '📊 Business Dashboard & Live KPIs',
+        desc: 'Monitor this month\'s total sales, pending udhar balance, recovered cash, and estimated gross profit in real time.',
+        hint: '💡 Profits and balances calculate automatically with every invoice.'
+      },
+      {
+        tab: 'tabBilling',
+        target: '#mBilling',
+        badge: 'Step 3 of 7',
+        title: '🧾 New GST Invoice & Dual Print',
+        desc: 'Select a farmer, add seeds (0%), fertilizers (5%), or pesticides (18% GST). Choose cash or udhar, and print A4 or 3-inch thermal receipts with 1-click.',
+        hint: '💡 Your fertilizer, pesticide, and seed license numbers print automatically.'
+      },
+      {
+        tab: 'tabKhata',
+        target: '#mKhata',
+        badge: 'Step 4 of 7',
+        title: '🌾 Farmer Ledger & WhatsApp QR Reminders',
+        desc: 'Track outstanding farmer balances and due dates. Click "📲 WhatsApp" to send a photo payment card with UPI QR directly to the farmer\'s mobile.',
+        hint: '💡 Reminder messages can be switched between Marathi, Hindi, or English instantly!'
+      },
+      {
+        tab: 'tabInventory',
+        target: '#mInventory',
+        badge: 'Step 5 of 7',
+        title: '📦 Inventory & Seasonal Demand Forecasting',
+        desc: 'Forecast product demand for Kharif, Rabi, or Zaid seasons. Generate and dispatch wholesale Purchase Orders to distributors via print or WhatsApp.',
+        hint: '💡 Critical stock alerts notify you before popular items run out.'
+      },
+      {
+        tab: 'tabHistory',
+        target: '#mHistory',
+        badge: 'Step 6 of 7',
+        title: '📜 Past Invoices & Farmer 360° Profit Analytics',
+        desc: 'Search past invoices. Click any farmer\'s name to view their complete lifetime purchase breakdown and total net profit contribution.',
+        hint: '💡 Frequent farmers automatically earn Gold/Silver loyalty badges.'
+      },
+      {
+        tab: 'tabSettings',
+        target: '#mSettings',
+        badge: 'Step 7 of 7',
+        title: '⚙️ Kendra Branding, UPI QR & Software Updates',
+        desc: 'Configure your Kendra store name, address, licenses, UPI ID, and logo. Pull GitHub updates with zero data loss.',
+        hint: '💡 Congratulations! You are now fully ready to run your Krishi Kendra.'
+      }
+    ]
+  };
+
+  let currentTourStep = 0;
+  let isTourActive = false;
+
+  function showWelcomeModal() {
+    const modal = document.getElementById('welcomeTourModal');
+    if (modal) modal.style.display = 'flex';
+  }
+
+  function dismissWelcomeModal() {
+    const modal = document.getElementById('welcomeTourModal');
+    if (modal) modal.style.display = 'none';
+    localStorage.setItem('kk_tour_completed', 'true');
+  }
+
+  function startInteractiveTour(force) {
+    dismissWelcomeModal();
+    isTourActive = true;
+    currentTourStep = 0;
+    const overlay = document.getElementById('tourOverlay');
+    if (overlay) overlay.style.display = 'block';
+    renderTourStep();
+  }
+
+  function renderTourStep() {
+    const lang = currentLang || 'mr';
+    const steps = TOUR_STEPS[lang] || TOUR_STEPS.mr;
+    const step = steps[currentTourStep];
+    if (!step) return;
+
+    if (step.tab) {
+      switchTab(step.tab);
+    }
+
+    const badgeEl = document.getElementById('tourStepBadge');
+    const titleEl = document.getElementById('tourStepTitle');
+    const descEl = document.getElementById('tourStepDesc');
+    const hintEl = document.getElementById('tourStepHint');
+    const prevBtn = document.getElementById('tourPrevBtn');
+    const nextBtn = document.getElementById('tourNextBtn');
+    const dotsEl = document.getElementById('tourDots');
+
+    if (badgeEl) badgeEl.innerText = step.badge;
+    if (titleEl) titleEl.innerText = step.title;
+    if (descEl) descEl.innerText = step.desc;
+    if (hintEl) hintEl.innerText = step.hint;
+
+    if (prevBtn) {
+      prevBtn.style.display = currentTourStep === 0 ? 'none' : 'inline-block';
+    }
+    if (nextBtn) {
+      const isLast = currentTourStep === steps.length - 1;
+      nextBtn.innerText = isLast ? (lang === 'mr' ? '🎉 पूर्ण झाले' : (lang === 'hi' ? '🎉 समाप्त' : '🎉 Finish')) : (lang === 'mr' ? 'पुढे ▶' : (lang === 'hi' ? 'आगे ▶' : 'Next ▶'));
+    }
+
+    if (dotsEl) {
+      dotsEl.innerHTML = steps.map((_, idx) => '<span style="width: ' + (idx === currentTourStep ? '16px' : '6px') + '; height: 6px; border-radius: 3px; background: ' + (idx === currentTourStep ? '#16a34a' : '#cbd5e1') + '; transition: all 0.2s;"></span>').join('');
+    }
+
+    setTimeout(() => {
+      const targetEl = document.querySelector(step.target);
+      if (targetEl) {
+        targetEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        positionTourTooltip(targetEl);
+      } else {
+        const spotlight = document.getElementById('tourSpotlight');
+        const tooltip = document.getElementById('tourTooltip');
+        if (spotlight) {
+          spotlight.style.top = '100px';
+          spotlight.style.left = '50%';
+          spotlight.style.width = '300px';
+          spotlight.style.height = '150px';
+          spotlight.style.transform = 'translateX(-50%)';
+        }
+        if (tooltip) {
+          tooltip.style.top = '270px';
+          tooltip.style.left = '50%';
+          tooltip.style.transform = 'translateX(-50%)';
+        }
+      }
+    }, 150);
+  }
+
+  function positionTourTooltip(targetEl) {
+    const rect = targetEl.getBoundingClientRect();
+    const spotlight = document.getElementById('tourSpotlight');
+    const tooltip = document.getElementById('tourTooltip');
+    if (!spotlight || !tooltip) return;
+
+    spotlight.style.transform = 'none';
+    tooltip.style.transform = 'none';
+
+    const pad = 6;
+    const top = Math.max(0, rect.top - pad);
+    const left = Math.max(0, rect.left - pad);
+    const width = Math.min(window.innerWidth - left, rect.width + (pad * 2));
+    const height = Math.min(window.innerHeight - top, rect.height + (pad * 2));
+
+    spotlight.style.top = top + 'px';
+    spotlight.style.left = left + 'px';
+    spotlight.style.width = width + 'px';
+    spotlight.style.height = height + 'px';
+
+    const ttWidth = 340;
+    const ttHeight = tooltip.offsetHeight || 220;
+
+    let ttTop = top + height + 12;
+    let ttLeft = left + (width / 2) - (ttWidth / 2);
+
+    if (ttTop + ttHeight > window.innerHeight - 20) {
+      ttTop = Math.max(10, top - ttHeight - 12);
+    }
+
+    if (ttLeft < 12) ttLeft = 12;
+    if (ttLeft + ttWidth > window.innerWidth - 12) {
+      ttLeft = window.innerWidth - ttWidth - 12;
+    }
+
+    tooltip.style.top = ttTop + 'px';
+    tooltip.style.left = ttLeft + 'px';
+  }
+
+  function nextTourStep() {
+    const lang = currentLang || 'mr';
+    const steps = TOUR_STEPS[lang] || TOUR_STEPS.mr;
+    if (currentTourStep < steps.length - 1) {
+      currentTourStep++;
+      renderTourStep();
+    } else {
+      endInteractiveTour();
+    }
+  }
+
+  function prevTourStep() {
+    if (currentTourStep > 0) {
+      currentTourStep--;
+      renderTourStep();
+    }
+  }
+
+  function endInteractiveTour() {
+    isTourActive = false;
+    const overlay = document.getElementById('tourOverlay');
+    if (overlay) overlay.style.display = 'none';
+    localStorage.setItem('kk_tour_completed', 'true');
+    switchTab('tabDashboard');
+  }
+
+  window.addEventListener('keydown', (e) => {
+    if (!isTourActive) return;
+    if (e.key === 'Escape') {
+      endInteractiveTour();
+    } else if (e.key === 'ArrowRight') {
+      nextTourStep();
+    } else if (e.key === 'ArrowLeft') {
+      prevTourStep();
+    }
+  });
+
+  window.addEventListener('resize', () => {
+    if (!isTourActive) return;
+    const lang = currentLang || 'mr';
+    const steps = TOUR_STEPS[lang] || TOUR_STEPS.mr;
+    const step = steps[currentTourStep];
+    if (step) {
+      const targetEl = document.querySelector(step.target);
+      if (targetEl) positionTourTooltip(targetEl);
+    }
+  });
+
   window.onload = function() {
     runDatabaseMigrations();
     const savedLang = localStorage.getItem('kk_lang') || 'hi';
@@ -6317,6 +6752,11 @@ var qrcode = function() {
     populateFarmerDatalist();
     checkSubscription();
     renderDashboard();
+
+    // First-Time User Interactive Tour Prompt
+    if (!localStorage.getItem('kk_tour_completed')) {
+      setTimeout(showWelcomeModal, 1200);
+    }
   };
 
   // =========================================================================

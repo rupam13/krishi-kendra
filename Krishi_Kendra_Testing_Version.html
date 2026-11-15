@@ -7590,6 +7590,127 @@ var qrcode = function() {
   const GITHUB_RAW_BASE = "https://raw.githubusercontent.com/rupam13/krishi-kendra/main/";
   const CURRENT_APP_VERSION = "v3.2.0-PRO";
 
+  // Unified 1-Click Update: Pulls Machine-Specific Custom Changes + Software Updates
+  async function checkAndApplyUpdates() {
+    const statusEl = document.getElementById('ghUpdateStatus');
+    const mid = getMachineId();
+    if (statusEl) {
+      statusEl.style.display = 'block';
+      statusEl.innerHTML = `
+        <div style="background: #eff6ff; border: 1.5px solid #bfdbfe; border-radius: 8px; padding: 14px; color: #1d4ed8; font-size: 12.5px; text-align: left;">
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+            <span style="font-size: 16px;">🔄</span>
+            <strong>क्लाउड अपडेट सर्व्हर तपासत आहे (Checking Updates)...</strong>
+          </div>
+          <div style="font-size: 11.5px; color: #475569;">
+            मशीन कोड: <strong>${mid}</strong> | चालू आवृत्ती: <strong>${CURRENT_APP_VERSION}</strong>
+          </div>
+        </div>
+      `;
+    }
+
+    let machineCustomApplied = false;
+    let machineMsg = "";
+
+    // 1. Check for Machine-Specific Custom Configuration in machines.json
+    try {
+      const mResp = await fetch(GITHUB_RAW_BASE + 'machines.json?t=' + Date.now());
+      if (mResp.ok) {
+        const mDb = await mResp.json();
+        const normMid = mid.trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
+        let matchedConfig = null;
+
+        for (let k in mDb) {
+          const normK = k.trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
+          if (normK === normMid || (normK.length >= 4 && normMid.startsWith(normK))) {
+            matchedConfig = mDb[k];
+            break;
+          }
+        }
+
+        if (matchedConfig) {
+          const s = getSettings();
+          let changed = false;
+          const fields = ['kendraName', 'tagline', 'ownerName', 'phone', 'address', 'gstin', 'fertLic', 'pestLic', 'seedLic', 'upiId', 'upiName'];
+          fields.forEach(f => {
+            if (matchedConfig[f] && matchedConfig[f] !== s[f]) {
+              s[f] = matchedConfig[f];
+              changed = true;
+            }
+          });
+
+          if (changed) {
+            localStorage.setItem('kk_settings', JSON.stringify(s));
+            applySettingsToUI();
+            machineCustomApplied = true;
+            machineMsg = `🏢 <strong>मशीन [${mid}] साठी सानुकूल केंद्र बदल यशस्वीरित्या लागू झाले:</strong> ${s.kendraName}`;
+          }
+        }
+      }
+    } catch (mErr) {
+      console.warn("Machine config check skipped (offline/unreachable):", mErr);
+    }
+
+    // 2. Check for Core Software Update in version.json
+    try {
+      const vResp = await fetch(GITHUB_RAW_BASE + 'version.json?t=' + Date.now());
+      if (!vResp.ok) throw new Error("Update manifest HTTP " + vResp.status);
+      const manifest = await vResp.json();
+      const remoteVer = manifest.version || CURRENT_APP_VERSION;
+      const isNewer = (remoteVer !== CURRENT_APP_VERSION);
+
+      if (statusEl) {
+        let html = '';
+
+        if (machineCustomApplied) {
+          html += `
+            <div style="background: #f0fdf4; border: 1.5px solid #86efac; border-radius: 8px; padding: 12px; margin-bottom: 12px; color: #166534; font-size: 12.5px;">
+              ✅ ${machineMsg}
+            </div>
+          `;
+        }
+
+        if (isNewer) {
+          html += `
+            <div style="background: #eff6ff; border: 1.5px solid #60a5fa; border-radius: 8px; padding: 14px; text-align: left;">
+              <div style="color: #1e40af; font-weight: bold; font-size: 14px; margin-bottom: 4px;">
+                🎉 नवीन सॉफ्टवेअर अपडेट उपलब्ध: <strong>${remoteVer}</strong> (चालू: ${CURRENT_APP_VERSION})
+              </div>
+              <div style="font-size: 11.5px; color: #475569; margin-bottom: 8px;">
+                रिलीज तारीख: ${manifest.releaseDate || '-'} | ${manifest.title || 'नवीन कृषी सुधारणा'}
+              </div>
+              <ul style="font-size: 11.5px; color: #334155; margin: 0 0 12px 18px; padding: 0; line-height: 1.5;">
+                ${(manifest.changelog || []).map(c => `<li>${c}</li>`).join('')}
+              </ul>
+              <button class="btn" onclick="pullGitHubUpdate()" style="padding: 8px 18px; font-weight: bold; background: #2563eb; border-color: #1d4ed8;">
+                ⚡ नवीन आवृत्ती डाऊनलोड करा (Zero Data Loss)
+              </button>
+            </div>
+          `;
+        } else {
+          html += `
+            <div style="background: #f0fdf4; border: 1.5px solid #86efac; border-radius: 8px; padding: 12px; color: #166534; font-size: 12.5px; text-align: left;">
+              ✅ <strong>आपले सॉफ्टवेअर आधीच अद्ययावत आहे (v${CURRENT_APP_VERSION})!</strong><br>
+              <div style="font-size: 11.5px; color: #15803d; margin-top: 4px;">
+                सर्व्हरवरील तपासणी पूर्ण झाली. ${machineCustomApplied ? 'मशीननिहाय सानुकूल बदल यशस्वीरित्या लागू करण्यात आले.' : 'कोणत्याही नवीन अपडेटची आवश्यकता नाही.'}
+              </div>
+            </div>
+          `;
+        }
+
+        statusEl.innerHTML = html;
+      }
+    } catch (vErr) {
+      if (statusEl) {
+        statusEl.innerHTML = `
+          <div style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 12px; color: #92400e; font-size: 12px; text-align: left;">
+            ⚠️ <strong>सर्व्हर तपासणी:</strong> इंटरनेट कनेक्शन मिळाले नाही (${vErr.message}). आपले स्थानिक सॉफ्टवेअर आणि सर्व डेटा १००% सुरक्षित चालू राहील.
+          </div>
+        `;
+      }
+    }
+  }
+
   // Check for updates against GitHub repo
   async function checkGitHubUpdates() {
     const statusEl = document.getElementById('ghUpdateStatus');

@@ -1087,100 +1087,69 @@
       <div class="card">
         <div class="card-title">
           <div>
-            <span>🚀 Software Updates, GitHub Sync & Machine Configurations</span>
-            <small style="color: #15803d; font-weight: bold; margin-left: 10px;">Zero Data Loss Engine</small>
+            <span>🚀 सॉफ्टवेअर अपडेट आणि डेटा बॅकअप (Updates & Data Backup)</span>
+            <small style="color: #15803d; font-weight: bold; margin-left: 10px;">डेटा १००% सुरक्षित (Zero Data Loss)</small>
           </div>
-          <span class="status-tag tag-green">Database 100% Safe (डेटा सुरक्षित)</span>
+          <span class="status-tag tag-green">डेटा सुरक्षित (100% Safe)</span>
         </div>
 
         <!-- 3 KPI Status Cards -->
-        <div class="grid-3" style="margin-bottom: 18px;">
+        <div class="grid-3" style="margin-bottom: 20px;">
           <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 14px;">
-            <div style="font-size: 11px; color: #64748b; font-weight: bold; text-transform: uppercase;">Installed Version</div>
+            <div style="font-size: 11px; color: #64748b; font-weight: bold; text-transform: uppercase;">स्थापित आवृत्ती (Installed Version)</div>
             <div style="font-size: 18px; font-weight: 800; color: #166534; margin: 4px 0;">v3.2.0-PRO</div>
-            <div style="font-size: 11px; color: #475569;">Build: 2026-PRODUCTION</div>
+            <div style="font-size: 11px; color: #475569;">Build: 2026-Production</div>
           </div>
           <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 14px;">
-            <div style="font-size: 11px; color: #64748b; font-weight: bold; text-transform: uppercase;">Your Machine Code</div>
+            <div style="font-size: 11px; color: #64748b; font-weight: bold; text-transform: uppercase;">आपला मशीन कोड (Machine ID)</div>
             <div style="font-size: 16px; font-weight: 800; color: #0f172a; margin: 4px 0; font-family: monospace;" id="updMachineId">KK-XXXX-XXXX</div>
-            <div style="font-size: 11px; color: #15803d;">Hardware-Bound Licensing Active</div>
+            <div style="font-size: 11px; color: #15803d;">हार्डवेअर-सुरक्षित परवाना (Licensed)</div>
           </div>
           <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 14px;">
-            <div style="font-size: 11px; color: #64748b; font-weight: bold; text-transform: uppercase;">Developer & Support</div>
+            <div style="font-size: 11px; color: #64748b; font-weight: bold; text-transform: uppercase;">अधिकृत ग्राहक सपोर्ट (Support)</div>
             <div style="font-size: 14px; font-weight: 800; color: #1e293b; margin: 4px 0;">Rupam Wadibhasme</div>
             <div style="font-size: 11px; color: #64748b;">📞 8857851277 | ✉️ rupam13@hotmail.com</div>
           </div>
         </div>
 
-        <!-- SECTION 1: GITHUB PRODUCTION AUTO-UPDATER -->
+        <!-- SECTION 1: 1-CLICK SECURE SOFTWARE UPDATES -->
         <div style="border-top: 1.5px solid var(--border); padding-top: 16px; margin-bottom: 22px;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-            <h4 style="margin: 0; color: #166534; font-size: 15px;">1. 🌐 GitHub Production Auto-Updater (गिटहब थेट उत्पादन अपडेट)</h4>
+            <h4 style="margin: 0; color: #166534; font-size: 15px;">1. 🌐 स्वयंचलित सॉफ्टवेअर अपडेट (Automated Software Update)</h4>
             <span style="background: #eff6ff; color: #1d4ed8; font-size: 11px; font-weight: bold; padding: 2px 8px; border-radius: 9999px; border: 1px solid #bfdbfe;">
-              PUBLIC REPO SYNC
+              OTA ENGINE
             </span>
           </div>
-          <p style="font-size: 12px; color: #64748b; margin-bottom: 12px;">
-            Official Public Repository: <strong style="color: #0f172a;">https://github.com/rupam13/krishi-kendra.git</strong><br>
-            Check for new features, bug fixes, or pull production updates safely directly from GitHub without losing any bills or stock.
+          <p style="font-size: 12px; color: #64748b; margin-bottom: 12px; line-height: 1.5;">
+            सॉफ्टवेअरची नवीन आवृत्ती, सुरक्षा पॅचेस किंवा नवीन कृषी फिचर्स एका क्लिकवर सुरक्षितपणे तपासा. अपडेट करताना आपला जुना कोणताही ग्राहक, माल किंवा बिलांचा डेटा नष्ट होत नाही.
           </p>
 
           <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 12px;">
-            <button class="btn" onclick="checkGitHubUpdates()" style="padding: 9px 16px;">
-              🔍 Check GitHub for Updates (नवीन व्हर्जन तपासा)
-            </button>
-            <button class="btn btn-outline" onclick="pullGitHubUpdate()" style="padding: 9px 16px;">
-              ⚡ 1-Click Pull & Update from GitHub (थेट अपडेट करा)
+            <button class="btn" onclick="checkAndApplyUpdates()" style="padding: 10px 20px; font-weight: bold; background: #16a34a; border-color: #15803d; box-shadow: 0 2px 4px rgba(22, 163, 74, 0.25);">
+              🔍 नवीन अपडेट तपासा व इन्स्टॉल करा (Check & Install Updates)
             </button>
           </div>
 
           <div id="ghUpdateStatus" style="display: none;"></div>
         </div>
 
-        <!-- SECTION 2: MACHINE-SPECIFIC CONFIGURATION & FORM SYNC -->
-        <div style="border-top: 1.5px solid var(--border); padding-top: 16px; margin-bottom: 22px;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-            <h4 style="margin: 0; color: #166534; font-size: 15px;">2. 🖥️ Machine-Specific Configuration & Form Sync (मशीननिहाय सानुकूल सेटिंग्ज व फॉर्म अपडेट)</h4>
-            <span style="background: #f0fdf4; color: #15803d; font-size: 11px; font-weight: bold; padding: 2px 8px; border-radius: 9999px; border: 1px solid #86efac;">
-              TARGETED OTA
-            </span>
-          </div>
-          <p style="font-size: 12px; color: #64748b; margin-bottom: 12px;">
-            When you click "Sync Machine Settings", the software checks <strong style="color: #0f172a;">machines.json</strong> on GitHub for this specific Machine ID (<span id="syncMachineIdDisplay" style="font-family: monospace; font-weight: bold; color: #166534;">---</span>) and automatically updates your Kendra Settings form (Kendra Name, Address, GSTIN, License Numbers, UPI ID, etc.) to match this machine's custom setup!
-          </p>
-
-          <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 12px;">
-            <button class="btn" onclick="syncMachineConfigFromGitHub()" style="padding: 9px 16px; background: #047857;">
-              🔄 Sync Machine Settings from GitHub (मशीन सेटिंग्ज अपडेट करा)
-            </button>
-            <button class="btn btn-outline" onclick="copyMachineJsonForGitHub()" style="padding: 9px 16px;">
-              📋 Copy Machine JSON for GitHub (गिटहबसाठी कोड कॉपी करा)
-            </button>
-            <button class="btn btn-outline" onclick="applyManualMachineJson()" style="padding: 9px 16px;">
-              ✏️ Paste Custom JSON Manually (मॅन्युअल कोड पेस्ट करा)
-            </button>
-          </div>
-
-          <div id="machineSyncStatus" style="display: none;"></div>
-        </div>
-
-        <!-- SECTION 3: COMPLETE DATABASE BACKUP & RESTORE (ZERO DATA LOSS) -->
+        <!-- SECTION 2: COMPLETE DATABASE BACKUP & DISASTER RECOVERY -->
         <div style="border-top: 1.5px solid var(--border); padding-top: 16px;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-            <h4 style="margin: 0; color: #166534; font-size: 15px;">3. 💾 Complete Database Backup & Disaster Recovery (डेटा बॅकअप आणि रिस्टोअर)</h4>
+            <h4 style="margin: 0; color: #166534; font-size: 15px;">2. 💾 संपूर्ण डेटा बॅकअप आणि सुरक्षितता (Data Backup & Safety)</h4>
             <span style="background: #f1f5f9; color: #475569; font-size: 11px; font-weight: bold; padding: 2px 8px; border-radius: 9999px;">
-              OFFLINE ENCRYPTED
+              १००% गोपनीय व सुरक्षित
             </span>
           </div>
-          <p style="font-size: 12px; color: #64748b; margin-bottom: 12px;">
-            Download your full database (all bills, farmers, products, khata ledgers & settings). Even if the computer is formatted or replaced, you can restore everything in 1 second without data loss.
+          <p style="font-size: 12px; color: #64748b; margin-bottom: 12px; line-height: 1.5;">
+            आपल्या दुकानातील सर्व बिले, शेतकरी, उधारी खातावही आणि स्टॉकचा पूर्ण डेटा कॉम्प्युटरमध्ये सुरक्षित सेव्ह करण्यासाठी खालील बॅकअप बटण वापरा. संगणक खराब झाल्यास किंवा बदलल्यास ही फाईल वापरून १ सेकंदात सर्व डेटा पूर्ववत करता येतो.
           </p>
           <div style="display: flex; gap: 12px; flex-wrap: wrap;">
             <button class="btn" style="padding: 10px 18px;" onclick="exportFullDatabaseBackup()">
-              💾 Download Full Database Backup (.json)
+              💾 संपूर्ण डेटा बॅकअप डाऊनलोड करा (.json)
             </button>
             <label class="btn btn-outline" style="padding: 10px 18px; cursor: pointer; margin: 0;">
-              📂 Restore Database from Backup File
+              📂 बॅकअप फाईलवरून डेटा पूर्ववत (Restore) करा
               <input type="file" id="restoreFileInput" accept=".json" onchange="importDatabaseBackup(event)" style="display: none;">
             </label>
           </div>
@@ -1512,9 +1481,7 @@
         <button class="btn" onclick="extendTrial7Days()" style="padding: 7px 14px; font-size: 12px; background: #15803d;">
           ⏳ +७ दिवस चाचणी वाढवा (Extend 7 Days)
         </button>
-        <button class="btn btn-outline" onclick="simulateExpiry()" style="padding: 7px 12px; font-size: 11.5px; color: #dc2626;">
-          🔒 चाचणी समाप्ती तपासा (Test Lock)
-        </button>
+        
       </div>
     </div>
   </div>
@@ -4067,11 +4034,31 @@ var qrcode = function() {
     if (document.getElementById('updMachineId')) document.getElementById('updMachineId').innerText = mid;
     if (document.getElementById('syncMachineIdDisplay')) document.getElementById('syncMachineIdDisplay').innerText = mid;
 
-    // 1. Establish Permanent Date of First Installation
+    // 1. Establish Permanent Date of First Installation (Anti-Tamper Protected)
     let installDate = localStorage.getItem('kk_install_date');
     if (!installDate) {
       installDate = new Date().toISOString().split('T')[0];
       localStorage.setItem('kk_install_date', installDate);
+      sha256(mid + '|' + installDate + '|' + MASTER_SECRET).then(h => {
+        localStorage.setItem('kk_install_sig', h.substring(0, 12));
+      });
+    } else {
+      // Validate anti-tamper signature
+      const savedSig = localStorage.getItem('kk_install_sig');
+      if (savedSig) {
+        sha256(mid + '|' + installDate + '|' + MASTER_SECRET).then(h => {
+          if (h.substring(0, 12) !== savedSig) {
+            console.warn('⚠️ Anti-tamper violation on install date!');
+            // Revert tampering
+            const now = new Date().toISOString().split('T')[0];
+            localStorage.setItem('kk_install_date', now);
+          }
+        });
+      } else {
+        sha256(mid + '|' + installDate + '|' + MASTER_SECRET).then(h => {
+          localStorage.setItem('kk_install_sig', h.substring(0, 12));
+        });
+      }
     }
 
     // Maximum 2 Months (60 Days) Cap from First Installation Date
@@ -4161,6 +4148,8 @@ var qrcode = function() {
     if (sig === expectedSig) {
       localStorage.setItem('kk_expiry', calculatedExpiry);
       localStorage.setItem('kk_is_trial', 'false');
+      localStorage.setItem('kk_license_sig', expectedSig);
+      localStorage.setItem('kk_license_key', rawKey);
       alert(`🎉 अभिनंदन! तुमचा कृषी सेवा केंद्र परवाना ${calculatedExpiry} पर्यंत यशस्वीरित्या सक्रिय झाला आहे!\n(Subscription renewed successfully till ${calculatedExpiry})`);
       document.getElementById('renewalKeyInput').value = '';
       closeRenewalModal();

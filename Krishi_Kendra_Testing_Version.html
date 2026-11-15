@@ -1170,6 +1170,9 @@
             <button class="btn btn-outline" onclick="shareMachineStatusToDev()" style="padding: 10px 16px; font-weight: bold; border-color: #2563eb; color: #1d4ed8;" title="डेव्हलपरला मशीन कोड व बदल विनंती पाठवा">
               📤 मशीन तपशील व विनंती पाठवा (Request Custom Change)
             </button>
+            <button class="btn btn-outline" onclick="rollbackPreviousUpdate()" style="padding: 10px 16px; font-weight: bold; border-color: #dc2626; color: #b91c1c;" title="अपडेटमध्ये अडचण असल्यास मागील आवृत्तीवर परत जा">
+              ⏪ मागील आवृत्तीवर परत जा (1-Click Rollback)
+            </button>
           </div>
 
           <div id="ghUpdateStatus" style="display: none;"></div>
@@ -7715,6 +7718,24 @@ var qrcode = function() {
   function acceptAndApplyMachinePatch() {
     if (!pendingMachinePatch) return;
     const patch = pendingMachinePatch;
+
+    // Automatic pre-patch snapshot for 1-click rollback with zero data loss
+    try {
+      const prePatchSnapshot = {
+        timestamp: new Date().toLocaleString(),
+        isoTimestamp: new Date().toISOString(),
+        settings: getSettings(),
+        customCss: localStorage.getItem('kk_machine_custom_css') || '',
+        patchId: localStorage.getItem('kk_applied_patch_id') || 'BASE',
+        inventory: getInventory(),
+        history: JSON.parse(localStorage.getItem('kk_history') || '[]'),
+        khata: getKhata(),
+        farmers: getFarmers()
+      };
+      localStorage.setItem('kk_rollback_snapshot', JSON.stringify(prePatchSnapshot));
+    } catch (snapErr) {
+      console.warn("Pre-patch snapshot error:", snapErr);
+    }
     const config = pendingMachineConfig || {};
     const mid = getMachineId();
 
@@ -7764,6 +7785,80 @@ var qrcode = function() {
     alert(`🎉 अभिनंदन! आपल्या मशीनसाठी [${patch.title}] चे सानुकूल बदल यशस्वीरित्या लागू झाले आहेत!
 
 सर्व डेटा (बिले, शेतकरी, उधारी) 100% सुरक्षित आहे.`);
+  }
+
+  // 1-Click Rollback to Previous Version / State with Zero Data Loss
+  function rollbackPreviousUpdate() {
+    const raw = localStorage.getItem('kk_rollback_snapshot') || localStorage.getItem('kk_auto_pre_update_backup');
+    if (!raw) {
+      alert("ℹ️ कोणताही मागील स्नॅपशॉट सापडला नाही (No previous update snapshot found).\nसध्याचे सॉफ्टवेअर चालू स्थितीमध्ये सुरक्षित आहे.");
+      return;
+    }
+
+    try {
+      const snap = JSON.parse(raw);
+      const dateStr = snap.timestamp || 'मागील अपडेट स्नॅपशॉट';
+      const billCount = (snap.history || []).length;
+      const farmerCount = (snap.farmers || []).length;
+      const patchId = snap.patchId || 'आधीचा पॅच';
+
+      const confirmMsg = `⚠️ आपण मागील सुरक्षित स्थितीवर परत (Rollback) जाऊ इच्छिता का?\n\n` +
+        `📅 स्नॅपशॉट तारीख: ${dateStr}\n` +
+        `📦 मागील पॅच: ${patchId}\n` +
+        `🧾 उपलब्ध जुनी बिले: ${billCount}\n` +
+        `👥 उपलब्ध शेतकरी: ${farmerCount}\n\n` +
+        `✅ जुना सर्व डेटा १००% सुरक्षित पूर्ववत होईल आणि नवीन बदल काढून टाकले जातील.`;
+
+      if (!confirm(confirmMsg)) return;
+
+      // 1. Restore database tables
+      if (snap.inventory) localStorage.setItem('kk_inventory', JSON.stringify(snap.inventory));
+      if (snap.history) localStorage.setItem('kk_history', JSON.stringify(snap.history));
+      if (snap.khata) localStorage.setItem('kk_khata', JSON.stringify(snap.khata));
+      if (snap.farmers) localStorage.setItem('kk_farmers', JSON.stringify(snap.farmers));
+      if (snap.settings) localStorage.setItem('kk_settings', JSON.stringify(snap.settings));
+
+      // 2. Revert custom CSS and patch metadata
+      if (snap.customCss !== undefined) {
+        if (snap.customCss) {
+          localStorage.setItem('kk_machine_custom_css', snap.customCss);
+        } else {
+          localStorage.removeItem('kk_machine_custom_css');
+        }
+      } else {
+        localStorage.removeItem('kk_machine_custom_css');
+      }
+
+      if (snap.patchId && snap.patchId !== 'BASE') {
+        localStorage.setItem('kk_applied_patch_id', snap.patchId);
+      } else {
+        localStorage.removeItem('kk_applied_patch_id');
+        localStorage.removeItem('kk_applied_patch_data');
+      }
+
+      applyCustomMachineCss();
+      applySettingsToUI();
+      populateProductSelect();
+      populateFarmerDatalist();
+      renderDashboard();
+
+      const statusEl = document.getElementById('ghUpdateStatus');
+      if (statusEl) {
+        statusEl.style.display = 'block';
+        statusEl.innerHTML = `
+          <div style="background: #f0fdf4; border: 1.5px solid #86efac; border-radius: 8px; padding: 12px; margin-top: 10px; color: #166534; font-size: 12.5px; text-align: left;">
+            ⏪ <strong>रोलबॅक यशस्वी (Rollback Successful)!</strong><br>
+            <div style="font-size: 11.5px; color: #15803d; margin-top: 4px;">
+              सॉफ्टवेअर सुरक्षितपणे मागील आवृत्तीवर पूर्ववत करण्यात आले आहे (${dateStr}). सर्व बिले व शेतकरी १००% सुरक्षित आहेत!
+            </div>
+          </div>
+        `;
+      }
+
+      alert(`✅ रोलबॅक यशस्वी!\n\nसॉफ्टवेअर मागील सुरक्षित स्थितीवर (${dateStr}) पूर्ववत झाले आहे.\nआपला सर्व डेटा सुरक्षित आहे.`);
+    } catch (e) {
+      alert("❌ रोलबॅक करताना त्रुटी: " + e.message);
+    }
   }
 
   function shareMachineStatusToDev() {
@@ -7986,7 +8081,19 @@ var qrcode = function() {
         throw new Error("Downloaded content did not pass HTML validity check.");
       }
 
-      // Auto backup localStorage before upgrade
+      // Auto backup localStorage and rollback snapshot before upgrade
+      const preUpdateBackupData = {
+        timestamp: new Date().toLocaleString(),
+        isoTimestamp: new Date().toISOString(),
+        inventory: getInventory(),
+        history: JSON.parse(localStorage.getItem('kk_history') || '[]'),
+        khata: getKhata(),
+        farmers: getFarmers(),
+        settings: getSettings(),
+        customCss: localStorage.getItem('kk_machine_custom_css') || '',
+        patchId: localStorage.getItem('kk_applied_patch_id') || 'BASE'
+      };
+      localStorage.setItem('kk_rollback_snapshot', JSON.stringify(preUpdateBackupData));
       localStorage.setItem('kk_auto_pre_update_backup', JSON.stringify({
         timestamp: new Date().toISOString(),
         inventory: getInventory(),

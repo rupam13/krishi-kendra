@@ -4328,8 +4328,13 @@ var qrcode = function() {
 
   // Khata Management
   function getKhata() {
-    const data = localStorage.getItem('kk_khata');
-    return data ? JSON.parse(data) : DEFAULT_KHATA;
+    try {
+      const data = localStorage.getItem('kk_khata');
+      return data ? JSON.parse(data) : DEFAULT_KHATA;
+    } catch (e) {
+      console.error("Storage error in getKhata, using defaults", e);
+      return DEFAULT_KHATA;
+    }
   }
   function saveKhata(list) {
     localStorage.setItem('kk_khata', JSON.stringify(list));
@@ -5223,8 +5228,13 @@ var qrcode = function() {
 
   // Inventory Management
   function getInventory() {
-    const d = localStorage.getItem('kk_inventory');
-    return d ? JSON.parse(d) : DEFAULT_PRODUCTS;
+    try {
+      const d = localStorage.getItem('kk_inventory');
+      return d ? JSON.parse(d) : DEFAULT_PRODUCTS;
+    } catch (e) {
+      console.error("Storage error in getInventory, using defaults", e);
+      return DEFAULT_PRODUCTS;
+    }
   }
   function saveInventory(inv) {
     localStorage.setItem('kk_inventory', JSON.stringify(inv));
@@ -5394,10 +5404,25 @@ var qrcode = function() {
     const qty = parseFloat(document.getElementById('itemQty').value);
     const rate = parseFloat(document.getElementById('itemRate').value);
 
-    if (!pId) { alert("Please select a product!"); return; }
-    if (!qty || qty <= 0) { alert("Please enter valid quantity!"); return; }
+    if (!pId) { alert("Please select a product (उत्पादन निवडा)!"); return; }
+    if (!qty || qty <= 0 || isNaN(qty)) { alert("Please enter valid quantity (योग्य प्रमाण टाका)!"); return; }
+    if (isNaN(rate) || rate < 0) { alert("Please enter valid selling rate (योग्य दर टाका)!"); return; }
 
     const p = getInventory().find(x => x.id === pId);
+    if (!p) { alert("Product not found!"); return; }
+
+    // Stock availability check & overselling warning
+    const availStock = (p.stock !== undefined ? p.stock : (p.qty || 0));
+    if (availStock <= 0) {
+      if (!confirm(`⚠️ चेतावणी: '${p.name}' चा साठा संपला आहे (Stock: 0)! तरीही बिल बनवायचे आहे का?\n(Warning: Stock is 0. Proceed?)`)) {
+        return;
+      }
+    } else if (qty > availStock) {
+      if (!confirm(`⚠️ चेतावणी: निवडलेले प्रमाण (${qty}) उपलब्ध साठ्यापेक्षा (${availStock}) जास्त आहे! तरीही पुढे जायचे का?\n(Warning: Quantity exceeds available stock. Proceed?)`)) {
+        return;
+      }
+    }
+
     const total = qty * rate;
 
     currentBillItems.push({
@@ -5667,9 +5692,26 @@ var qrcode = function() {
     });
 
     // Set Print Mode & Trigger Window Print (Single A4 Page)
+    // Auto-deduct stock from inventory on sale with zero data loss
+    const inv = getInventory();
+    currentBillItems.forEach(item => {
+      const prod = inv.find(p => p.id === item.id);
+      if (prod) {
+        prod.stock = Math.max(0, (prod.stock !== undefined ? prod.stock : (prod.qty || 0)) - item.qty);
+        prod.qty = prod.stock;
+      }
+    });
+    saveInventory(inv);
+    renderInventory();
+    if (typeof renderForecastTable === 'function') renderForecastTable();
+
+    // Set Print Mode & Trigger Window Print (Single A4 Page)
     document.body.className = (mode === 'invoice-only' ? 'print-invoice-only' : 'print-both');
     window.print();
-    setTimeout(() => { document.body.className = ''; }, 1000);
+    setTimeout(() => {
+      document.body.className = '';
+      resetBillForm();
+    }, 1000);
   }
 
   function saveInvoiceToHistory(inv) {
@@ -5698,6 +5740,21 @@ var qrcode = function() {
       return;
     }
     let hist = JSON.parse(localStorage.getItem('kk_history') || '[]');
+    const targetInv = hist.find(h => h.invNo === invNo);
+    if (targetInv && Array.isArray(targetInv.items)) {
+      // Restore returned items back to inventory stock
+      const inv = getInventory();
+      targetInv.items.forEach(item => {
+        const prod = inv.find(p => p.id === item.id);
+        if (prod) {
+          prod.stock = (prod.stock !== undefined ? prod.stock : (prod.qty || 0)) + item.qty;
+          prod.qty = prod.stock;
+        }
+      });
+      saveInventory(inv);
+      renderInventory();
+      if (typeof renderForecastTable === 'function') renderForecastTable();
+    }
     hist = hist.filter(h => h.invNo !== invNo);
     localStorage.setItem('kk_history', JSON.stringify(hist));
     renderHistory();
@@ -6038,8 +6095,13 @@ var qrcode = function() {
   }
 
   function getFarmers() {
-    const d = localStorage.getItem('kk_farmers');
-    return d ? JSON.parse(d) : DEFAULT_FARMERS;
+    try {
+      const d = localStorage.getItem('kk_farmers');
+      return d ? JSON.parse(d) : DEFAULT_FARMERS;
+    } catch (e) {
+      console.error("Storage error in getFarmers, using defaults", e);
+      return DEFAULT_FARMERS;
+    }
   }
   function saveFarmers(list) {
     localStorage.setItem('kk_farmers', JSON.stringify(list));

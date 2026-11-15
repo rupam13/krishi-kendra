@@ -4211,7 +4211,7 @@ var qrcode = function() {
     let isTrial = localStorage.getItem('kk_is_trial');
     if (!expiry) {
       const trial = new Date();
-      trial.setDate(trial.getDate() + 7);
+      trial.setDate(trial.getDate() + 60); // 2 Full Months (60 Days) Free Trial for New Clients
       expiry = trial.toISOString().split('T')[0];
       localStorage.setItem('kk_expiry', expiry);
       localStorage.setItem('kk_is_trial', 'true');
@@ -4257,7 +4257,7 @@ var qrcode = function() {
       if (badge) {
         badge.className = 'license-badge badge-active';
         if (isTrial === 'true') {
-          badge.innerText = `🟢 मोफत चाचणी: ${daysLeft} दिवस शिल्लक (कमाल मर्यादा: ${totalMaxRemaining}d)`;
+          badge.innerText = `🟢 मोफत चाचणी: ${daysLeft} दिवस शिल्लक (२ महिने मोफत)`;
           badge.title = `मोफत चाचणी चालू आहे (Valid till ${expiry}). पहिल्या स्थापनेपासून (${installDate}) कमाल २ महिने मर्यादा: ${maxExpiryStr}`;
         } else {
           badge.innerText = `⭐ अधिकृत परवाना (Valid till ${expiry})`;

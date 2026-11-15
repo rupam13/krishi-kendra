@@ -1048,45 +1048,49 @@
         <p style="color: #64748b; font-size: 13px;">These details and logo will appear at the top of every printed bill.</p>
         <div class="grid-2">
           <div class="form-group">
-            <label>Krishi Kendra Name *</label>
-            <input type="text" id="setKendraName" value="Kisan Krishi Seva Kendra">
+            <label>कृषी केंद्राचे नाव (Krishi Kendra Name) *</label>
+            <input type="text" id="setKendraName" placeholder="उदा. श्री स्वामी समर्थ कृषी सेवा केंद्र">
           </div>
           <div class="form-group">
-            <label>Tagline / Sub-heading</label>
-            <input type="text" id="setTagline" value="Seeds, Fertilizers, Pesticides & Farm Equipments">
+            <label>मालकाचे / प्रोप्रायटर नाव (Owner / Proprietor Name)</label>
+            <input type="text" id="setOwnerName" placeholder="उदा. सचिन विठ्ठल पाटील">
           </div>
           <div class="form-group">
-            <label>GSTIN Number *</label>
-            <input type="text" id="setGstin" value="27AABCK1234F1Z8">
+            <label>टॅगलाइन / ब्रीदवाक्य (Tagline / Sub-heading)</label>
+            <input type="text" id="setTagline" placeholder="उदा. सर्व प्रकारची दर्जेदार खते, बियाणे व कीटकनाशके विक्रेते">
           </div>
           <div class="form-group">
-            <label>Contact Phone Number *</label>
-            <input type="text" id="setPhone" value="9876543210">
+            <label>GSTIN क्रमांक (GST Number - असल्यास)</label>
+            <input type="text" id="setGstin" placeholder="उदा. 27AABCK1234F1Z8 (ऐच्छिक)">
           </div>
           <div class="form-group">
-            <label>Fertilizer License No. *</label>
-            <input type="text" id="setFertLic" value="FERT/MH/2024/9912">
+            <label>संपर्क मोबाईल / व्हॉट्सॲप नंबर (Phone Number) *</label>
+            <input type="text" id="setPhone" placeholder="उदा. 9876543210">
           </div>
           <div class="form-group">
-            <label>Pesticide License No. *</label>
-            <input type="text" id="setPestLic" value="PEST/LIC/88120">
+            <label>खत परवाना क्र. (Fertilizer License No.)</label>
+            <input type="text" id="setFertLic" placeholder="उदा. FERT/MH/2026/01">
           </div>
           <div class="form-group">
-            <label>Seed License No. *</label>
-            <input type="text" id="setSeedLic" value="SEED/MH/44129">
+            <label>कीटकनाशक परवाना क्र. (Pesticide License No.)</label>
+            <input type="text" id="setPestLic" placeholder="उदा. PEST/LIC/8812">
           </div>
           <div class="form-group">
-            <label>Shop Address *</label>
-            <input type="text" id="setAddress" value="Near APMC Market Yard, Main Road, Shirpur, Dist. Dhule, Maharashtra">
+            <label>बियाणे परवाना क्र. (Seed License No.)</label>
+            <input type="text" id="setSeedLic" placeholder="उदा. SEED/MH/4412">
+          </div>
+          <div class="form-group" style="grid-column: span 2;">
+            <label>दुकानाचा पूर्ण पत्ता (Shop Address) *</label>
+            <input type="text" id="setAddress" placeholder="उदा. दुकान क्र. ४, कृषी उत्पन्न बाजार समिती समोर, मुख्य रस्ता">
           </div>
           <div class="form-group">
             <label>Shop UPI ID for QR Payments (उदा. 9876543210@ybl किंवा kendra@upi) *</label>
-            <input type="text" id="setUpiId" value="kisan.kendra@ybl" oninput="updateKendraQrPreview()" placeholder="e.g. 9876543210@ybl or kendra@paytm">
+            <input type="text" id="setUpiId" oninput="updateKendraQrPreview()" placeholder="उदा. 9876543210@ybl किंवा kendra@upi">
             <small style="color: #64748b; font-size: 11px;">Scannable PhonePe/GPay QR code will automatically print on all GST bills & receipts.</small>
           </div>
           <div class="form-group">
             <label>UPI Payee / Account Name (बँकेतील किंवा दुकानाचे नाव)</label>
-            <input type="text" id="setUpiName" value="Kisan Krishi Seva Kendra" oninput="updateKendraQrPreview()" placeholder="e.g. Kisan Krishi Seva Kendra">
+            <input type="text" id="setUpiName" oninput="updateKendraQrPreview()" placeholder="उदा. Shri Swami Samarth Krishi Kendra">
           </div>
           <div class="form-group" style="grid-column: span 2;">
             <label>Upload Shop Logo (Image will print on bill header)</label>
@@ -4365,7 +4369,10 @@ var qrcode = function() {
     if (tabId === 'tabKhata') renderKhataTable();
     if (tabId === 'tabInventory') renderInventory();
     if (tabId === 'tabHistory') renderHistory();
-    if (tabId === 'tabSettings') updateKendraQrPreview();
+    if (tabId === 'tabSettings') {
+      applySettingsToUI();
+      updateKendraQrPreview();
+    }
     if (tabId === 'tabUpdates') renderUpdatesTab();
   }
 
@@ -6036,26 +6043,37 @@ var qrcode = function() {
     }
   }
 
-  function saveSettings() {
-    const s = {
-      kendraName: document.getElementById('setKendraName').value,
-      tagline: document.getElementById('setTagline').value,
-      gstin: document.getElementById('setGstin').value,
-      phone: document.getElementById('setPhone').value,
-      fertLic: document.getElementById('setFertLic').value,
-      pestLic: document.getElementById('setPestLic').value,
-      seedLic: document.getElementById('setSeedLic').value,
-      address: document.getElementById('setAddress').value,
-      upiId: (document.getElementById('setUpiId') ? document.getElementById('setUpiId').value.trim() : '') || "kisan.kendra@ybl",
-      upiName: (document.getElementById('setUpiName') ? document.getElementById('setUpiName').value.trim() : '') || document.getElementById('setKendraName').value
-    };
+  function saveSettings(customSettings) {
+    let s;
+    if (customSettings && typeof customSettings === 'object' && customSettings.kendraName) {
+      s = Object.assign({}, getSettings(), customSettings);
+    } else {
+      s = {
+        kendraName: (document.getElementById('setKendraName') ? document.getElementById('setKendraName').value.trim() : ''),
+        ownerName: (document.getElementById('setOwnerName') ? document.getElementById('setOwnerName').value.trim() : ''),
+        tagline: (document.getElementById('setTagline') ? document.getElementById('setTagline').value.trim() : ''),
+        gstin: (document.getElementById('setGstin') ? document.getElementById('setGstin').value.trim() : ''),
+        phone: (document.getElementById('setPhone') ? document.getElementById('setPhone').value.trim() : ''),
+        fertLic: (document.getElementById('setFertLic') ? document.getElementById('setFertLic').value.trim() : ''),
+        pestLic: (document.getElementById('setPestLic') ? document.getElementById('setPestLic').value.trim() : ''),
+        seedLic: (document.getElementById('setSeedLic') ? document.getElementById('setSeedLic').value.trim() : ''),
+        address: (document.getElementById('setAddress') ? document.getElementById('setAddress').value.trim() : ''),
+        upiId: (document.getElementById('setUpiId') ? document.getElementById('setUpiId').value.trim() : ''),
+        upiName: (document.getElementById('setUpiName') ? document.getElementById('setUpiName').value.trim() : '') || (document.getElementById('setKendraName') ? document.getElementById('setKendraName').value.trim() : '')
+      };
+    }
     localStorage.setItem('kk_settings', JSON.stringify(s));
-    const customTpl = document.getElementById('setWaTemplate').value;
-    localStorage.setItem('kk_wa_custom_' + currentLang, customTpl);
-    localStorage.setItem('kk_wa_custom', customTpl);
+    localStorage.setItem('kk_setup_done', 'true');
+    if (document.getElementById('setWaTemplate')) {
+      const customTpl = document.getElementById('setWaTemplate').value;
+      localStorage.setItem('kk_wa_custom_' + currentLang, customTpl);
+      localStorage.setItem('kk_wa_custom', customTpl);
+    }
     applySettingsToUI();
     updateKendraQrPreview();
-    alert("✅ Kendra branding & UPI QR code settings saved successfully!");
+    if (!customSettings) {
+      alert("✅ केंद्र सेटिंग्ज व QR कोड यशस्वीरित्या सेव्ह झाले!\n(Kendra Details & QR Settings Saved Successfully!)");
+    }
   }
 
   
@@ -6104,14 +6122,14 @@ var qrcode = function() {
       return;
     }
 
-    const owner = document.getElementById('setupOwnerName').value.trim();
-    const tagline = document.getElementById('setupTagline').value.trim();
-    const gstin = document.getElementById('setupGstin').value.trim();
-    const fertLic = document.getElementById('setupFertLic').value.trim();
-    const pestLic = document.getElementById('setupPestLic').value.trim();
-    const seedLic = document.getElementById('setupSeedLic').value.trim();
-    const upiId = document.getElementById('setupUpiId').value.trim() || (phone + "@upi");
-    const upiName = document.getElementById('setupUpiName').value.trim() || kName;
+    const owner = (document.getElementById('setupOwnerName') ? document.getElementById('setupOwnerName').value.trim() : '');
+    const tagline = (document.getElementById('setupTagline') ? document.getElementById('setupTagline').value.trim() : '');
+    const gstin = (document.getElementById('setupGstin') ? document.getElementById('setupGstin').value.trim() : '');
+    const fertLic = (document.getElementById('setupFertLic') ? document.getElementById('setupFertLic').value.trim() : '');
+    const pestLic = (document.getElementById('setupPestLic') ? document.getElementById('setupPestLic').value.trim() : '');
+    const seedLic = (document.getElementById('setupSeedLic') ? document.getElementById('setupSeedLic').value.trim() : '');
+    const upiId = (document.getElementById('setupUpiId') ? document.getElementById('setupUpiId').value.trim() : '') || (phone + "@upi");
+    const upiName = (document.getElementById('setupUpiName') ? document.getElementById('setupUpiName').value.trim() : '') || kName;
 
     const newSettings = {
       kendraName: kName,
@@ -6131,7 +6149,12 @@ var qrcode = function() {
     localStorage.setItem('kk_setup_done', 'true');
     applySettingsToUI();
 
-    const m = document.getElementById('initialSetupModal'); if (m) { m.classList.remove('active'); m.style.display = 'none'; }
+    const m = document.getElementById('initialSetupModal');
+    if (m) {
+      m.classList.remove('active');
+      m.style.display = 'none';
+    }
+
     alert(`🎉 अभिनंदन! '${kName}' ची माहिती यशस्वीरित्या सेव्ह झाली आहे.\nआपले कृषी केंद्र बिलिंग सॉफ्टवेअर सुरू झाले आहे!`);
 
     // Launch welcome tour if not completed
@@ -6142,23 +6165,45 @@ var qrcode = function() {
 
   function applySettingsToUI() {
     const s = getSettings();
-    if (document.getElementById('navKendraName')) document.getElementById('navKendraName').innerText = s.kendraName || 'माझे कृषी सेवा केंद्र';
-    if (document.getElementById('navLicenses')) document.getElementById('navLicenses').innerText = `Fert: ${s.fertLic || '-'} | Pest: ${s.pestLic || '-'} | Seeds: ${s.seedLic || '-'}`;
-    if (document.getElementById('printKendraName')) document.getElementById('printKendraName').innerText = s.kendraName;
-    if (document.getElementById('rcptKendraName')) document.getElementById('rcptKendraName').innerText = s.kendraName;
-    if (document.getElementById('flKendraName')) document.getElementById('flKendraName').innerText = s.kendraName;
-    if (document.getElementById('poKendraName')) document.getElementById('poKendraName').innerText = s.kendraName;
+    const kName = s.kendraName || 'माझे कृषी सेवा केंद्र';
 
-    document.getElementById('setKendraName').value = s.kendraName;
-    document.getElementById('setTagline').value = s.tagline;
-    document.getElementById('setGstin').value = s.gstin;
-    document.getElementById('setPhone').value = s.phone;
-    document.getElementById('setFertLic').value = s.fertLic;
-    document.getElementById('setPestLic').value = s.pestLic;
-    document.getElementById('setSeedLic').value = s.seedLic;
-    document.getElementById('setAddress').value = s.address;
-    if (document.getElementById('setUpiId')) document.getElementById('setUpiId').value = s.upiId || 'kisan.kendra@ybl';
-    if (document.getElementById('setUpiName')) document.getElementById('setUpiName').value = s.upiName || s.kendraName || 'Kisan Krishi Seva Kendra';
+    if (document.getElementById('navKendraName')) {
+      document.getElementById('navKendraName').innerText = kName;
+    }
+    if (document.getElementById('navLicenses')) {
+      document.getElementById('navLicenses').innerText = `Fert: ${s.fertLic || '-'} | Pest: ${s.pestLic || '-'} | Seeds: ${s.seedLic || '-'}`;
+    }
+
+    // Print & Receipt Headers
+    if (document.getElementById('printKendraName')) document.getElementById('printKendraName').innerText = kName;
+    if (document.getElementById('printTagline')) document.getElementById('printTagline').innerText = s.tagline || '';
+    if (document.getElementById('printAddress')) document.getElementById('printAddress').innerText = s.address || '-';
+    if (document.getElementById('printGstin')) document.getElementById('printGstin').innerText = s.gstin || '-';
+    if (document.getElementById('printPhone')) document.getElementById('printPhone').innerText = s.phone || '-';
+    if (document.getElementById('printFertLic')) document.getElementById('printFertLic').innerText = s.fertLic || '-';
+    if (document.getElementById('printPestLic')) document.getElementById('printPestLic').innerText = s.pestLic || '-';
+    if (document.getElementById('printSeedLic')) document.getElementById('printSeedLic').innerText = s.seedLic || '-';
+    if (document.getElementById('printSignKendra')) document.getElementById('printSignKendra').innerText = kName;
+    if (document.getElementById('rcptKendraName')) document.getElementById('rcptKendraName').innerText = kName;
+    if (document.getElementById('rcptSignKendra')) document.getElementById('rcptSignKendra').innerText = kName;
+    if (document.getElementById('flKendraName')) document.getElementById('flKendraName').innerText = kName;
+    if (document.getElementById('flSignKendraName')) document.getElementById('flSignKendraName').innerText = kName;
+    if (document.getElementById('poKendraName')) document.getElementById('poKendraName').innerText = kName;
+    if (document.getElementById('poSignKendraName')) document.getElementById('poSignKendraName').innerText = kName;
+
+    // SETTINGS TAB INPUTS (DIRECT VALUE REFLECTION)
+    if (document.getElementById('setKendraName')) document.getElementById('setKendraName').value = s.kendraName || '';
+    if (document.getElementById('setOwnerName')) document.getElementById('setOwnerName').value = s.ownerName || '';
+    if (document.getElementById('setTagline')) document.getElementById('setTagline').value = s.tagline || '';
+    if (document.getElementById('setGstin')) document.getElementById('setGstin').value = s.gstin || '';
+    if (document.getElementById('setPhone')) document.getElementById('setPhone').value = s.phone || '';
+    if (document.getElementById('setFertLic')) document.getElementById('setFertLic').value = s.fertLic || '';
+    if (document.getElementById('setPestLic')) document.getElementById('setPestLic').value = s.pestLic || '';
+    if (document.getElementById('setSeedLic')) document.getElementById('setSeedLic').value = s.seedLic || '';
+    if (document.getElementById('setAddress')) document.getElementById('setAddress').value = s.address || '';
+    if (document.getElementById('setUpiId')) document.getElementById('setUpiId').value = s.upiId || '';
+    if (document.getElementById('setUpiName')) document.getElementById('setUpiName').value = s.upiName || s.kendraName || '';
+
     updateKendraQrPreview();
 
     let savedWa = getWaTemplateForLang(currentLang);
@@ -6172,15 +6217,27 @@ var qrcode = function() {
       localStorage.setItem('kk_wa_custom_' + currentLang, savedWa);
       localStorage.setItem('kk_wa_custom', savedWa);
     }
-    document.getElementById('setWaTemplate').value = savedWa;
+    if (document.getElementById('setWaTemplate')) {
+      document.getElementById('setWaTemplate').value = savedWa;
+    }
 
     const logo = localStorage.getItem('kk_logo');
     if (logo) {
-      document.getElementById('navLogo').src = logo;
-      document.getElementById('logoPreview').src = logo;
-      document.getElementById('logoPreview').style.display = 'block';
+      if (document.getElementById('navLogo')) document.getElementById('navLogo').src = logo;
+      if (document.getElementById('logoPreview')) {
+        document.getElementById('logoPreview').src = logo;
+        document.getElementById('logoPreview').style.display = 'block';
+      }
+      if (document.getElementById('printLogo')) {
+        document.getElementById('printLogo').src = logo;
+        document.getElementById('printLogo').style.display = 'block';
+      }
+      if (document.getElementById('rcptLogo')) {
+        document.getElementById('rcptLogo').src = logo;
+        document.getElementById('rcptLogo').style.display = 'block';
+      }
     } else {
-      document.getElementById('logoPreview').style.display = 'none';
+      if (document.getElementById('logoPreview')) document.getElementById('logoPreview').style.display = 'none';
     }
   }
 

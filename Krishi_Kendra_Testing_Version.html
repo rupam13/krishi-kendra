@@ -455,6 +455,7 @@
     text-align: right;
   }
 </style>
+  <style id="customMachineStyle"></style>
 </head>
 <body>
 
@@ -1166,6 +1167,9 @@
             <button class="btn" onclick="checkAndApplyUpdates()" style="padding: 10px 20px; font-weight: bold; background: #16a34a; border-color: #15803d; box-shadow: 0 2px 4px rgba(22, 163, 74, 0.25);">
               🔍 नवीन अपडेट तपासा व इन्स्टॉल करा (Check & Install Updates)
             </button>
+            <button class="btn btn-outline" onclick="shareMachineStatusToDev()" style="padding: 10px 16px; font-weight: bold; border-color: #2563eb; color: #1d4ed8;" title="डेव्हलपरला मशीन कोड व बदल विनंती पाठवा">
+              📤 मशीन तपशील व विनंती पाठवा (Request Custom Change)
+            </button>
           </div>
 
           <div id="ghUpdateStatus" style="display: none;"></div>
@@ -1791,6 +1795,61 @@
 </div>
 
 <!-- 2. Interactive Spotlight Backdrop & Floating Popover -->
+
+<!-- =========================================================================
+     MACHINE-SPECIFIC UPDATE & README REVIEW MODAL (FORK OTA)
+     ========================================================================= -->
+<div class="modal-overlay" id="machinePatchModal" style="display: none; z-index: 99995;">
+  <div class="modal-box" style="max-width: 640px; text-align: left; padding: 22px 24px; border-radius: 12px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.25);">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 10px;">
+      <div>
+        <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 4px;">
+          <span style="background: #dbeafe; color: #1d4ed8; font-size: 11px; font-weight: bold; padding: 2px 8px; border-radius: 9999px;">
+            🖥️ MACHINE-SPECIFIC FORK UPDATE
+          </span>
+          <span id="patchBadgeCode" style="font-family: monospace; font-size: 11.5px; color: #15803d; font-weight: bold;">KK-XXXX-XXXX</span>
+        </div>
+        <h3 id="patchModalTitle" style="margin: 0; color: #0f172a; font-size: 17px; line-height: 1.35;">
+          आपल्या मशीनसाठी विशेष सानुकूल बदल (Custom Update)
+        </h3>
+      </div>
+      <button style="background: none; border: none; font-size: 18px; color: #94a3b8; cursor: pointer; padding: 2px 6px;" onclick="closeMachinePatchModal()">✕</button>
+    </div>
+
+    <!-- Patch Metadata -->
+    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 14px; margin-bottom: 14px; display: flex; justify-content: space-between; font-size: 11.5px; color: #64748b; flex-wrap: wrap; gap: 8px;">
+      <div>पॅच आयडी (Patch ID): <strong id="patchModalId" style="color: #0f172a; font-family: monospace;">-</strong></div>
+      <div>आवृत्ती (Version): <strong id="patchModalVersion" style="color: #166534;">-</strong></div>
+      <div>तारीख (Date): <strong id="patchModalDate" style="color: #0f172a;">-</strong></div>
+    </div>
+
+    <!-- Readme / What's New Description -->
+    <div style="margin-bottom: 16px;">
+      <h4 style="margin: 0 0 8px 0; font-size: 13.5px; color: #1e293b;">
+        📋 या अपडेटमधील बदलांची माहिती (Readme / What was Added):
+      </h4>
+      <div id="patchModalReadme" style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 12px 14px; font-size: 12.5px; color: #166534; line-height: 1.6; max-height: 220px; overflow-y: auto;">
+        <!-- Readme bullet points rendered here -->
+      </div>
+    </div>
+
+    <!-- Safe Guarantee Callout -->
+    <div style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 10px 12px; font-size: 11.5px; color: #92400e; margin-bottom: 16px; line-height: 1.45;">
+      🔒 <strong>शून्य डेटा हानी (Zero Data Loss):</strong> हे बदल लागू केल्याने आपल्या जुन्या बिलांचा, उधारी खात्याचा किंवा स्टॉकचा डेटा नष्ट होत नाही. हे बदल केवळ आपल्या मशीनसाठी सक्रिय होतील.
+    </div>
+
+    <!-- Action Buttons -->
+    <div style="display: flex; gap: 10px; justify-content: flex-end;" id="patchActionButtons">
+      <button class="btn btn-outline" style="padding: 9px 18px; font-size: 12.5px;" onclick="closeMachinePatchModal()">
+        रद्द करा (Close)
+      </button>
+      <button id="btnAcceptPatch" class="btn btn-primary" style="padding: 9px 22px; font-size: 13px; font-weight: bold; background: #16a34a; border-color: #15803d; box-shadow: 0 2px 4px rgba(22, 163, 74, 0.25);" onclick="acceptAndApplyMachinePatch()">
+        ✅ बदल स्वीकारा व लागू करा (Accept & Apply Changes)
+      </button>
+    </div>
+  </div>
+</div>
+
 <div id="tourOverlay" style="display: none; position: fixed; inset: 0; z-index: 99998; pointer-events: none;">
   <!-- Dark Backdrop with Cutout Spotlight -->
   <div id="tourSpotlight" style="position: absolute; border: 2.5px solid #22c55e; border-radius: 8px; box-shadow: 0 0 0 9999px rgba(15, 23, 42, 0.76), 0 0 20px 4px rgba(34, 197, 94, 0.6); transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1); pointer-events: auto;"></div>
@@ -7590,6 +7649,140 @@ var qrcode = function() {
   const GITHUB_RAW_BASE = "https://raw.githubusercontent.com/rupam13/krishi-kendra/main/";
   const CURRENT_APP_VERSION = "v3.2.0-PRO";
 
+    // =========================================================================
+  // MACHINE-SPECIFIC CUSTOM UI & FORK PATCH ENGINE
+  // =========================================================================
+
+  let pendingMachinePatch = null;
+  let pendingMachineConfig = null;
+
+  function applyCustomMachineCss() {
+    const css = localStorage.getItem('kk_machine_custom_css');
+    let el = document.getElementById('customMachineStyle');
+    if (!el) {
+      el = document.createElement('style');
+      el.id = 'customMachineStyle';
+      document.head.appendChild(el);
+    }
+    el.innerHTML = css || '';
+  }
+
+  function openMachinePatchModal(patch, config, isAlreadyApplied) {
+    pendingMachinePatch = patch || {};
+    pendingMachineConfig = config || {};
+
+    const modal = document.getElementById('machinePatchModal');
+    if (!modal) return;
+
+    const mid = getMachineId();
+    if (document.getElementById('patchBadgeCode')) document.getElementById('patchBadgeCode').innerText = mid;
+    if (document.getElementById('patchModalTitle')) document.getElementById('patchModalTitle').innerText = pendingMachinePatch.title || 'आपल्या मशीनसाठी सानुकूल बदल';
+    if (document.getElementById('patchModalId')) document.getElementById('patchModalId').innerText = pendingMachinePatch.patchId || '-';
+    if (document.getElementById('patchModalVersion')) document.getElementById('patchModalVersion').innerText = pendingMachinePatch.version || 'Custom';
+    if (document.getElementById('patchModalDate')) document.getElementById('patchModalDate').innerText = pendingMachinePatch.releaseDate || '-';
+
+    const readmeBox = document.getElementById('patchModalReadme');
+    if (readmeBox) {
+      const list = pendingMachinePatch.readme || [];
+      if (list.length > 0) {
+        readmeBox.innerHTML = '<ul style="margin: 0; padding-left: 20px; line-height: 1.6;">' +
+          list.map(item => '<li>' + item + '</li>').join('') +
+          '</ul>';
+      } else {
+        readmeBox.innerHTML = '<p style="margin: 0;">या अपडेटमध्ये आपल्या केंद्रासाठी खास डिझाइन व सेटिंग्ज सुधारणा जोडल्या आहेत.</p>';
+      }
+    }
+
+    const btnAccept = document.getElementById('btnAcceptPatch');
+    if (btnAccept) {
+      if (isAlreadyApplied) {
+        btnAccept.innerText = '✅ बदल आधीच सक्रिय आहेत (Re-Apply)';
+        btnAccept.style.background = '#047857';
+      } else {
+        btnAccept.innerText = '✅ बदल स्वीकारा व लागू करा (Accept & Apply Changes)';
+        btnAccept.style.background = '#16a34a';
+      }
+    }
+
+    modal.style.display = 'flex';
+  }
+
+  function closeMachinePatchModal() {
+    const modal = document.getElementById('machinePatchModal');
+    if (modal) modal.style.display = 'none';
+  }
+
+  function acceptAndApplyMachinePatch() {
+    if (!pendingMachinePatch) return;
+    const patch = pendingMachinePatch;
+    const config = pendingMachineConfig || {};
+    const mid = getMachineId();
+
+    const s = getSettings();
+
+    // 1. Apply store details
+    const fields = ['kendraName', 'tagline', 'ownerName', 'phone', 'address', 'gstin', 'fertLic', 'pestLic', 'seedLic', 'upiId', 'upiName'];
+    fields.forEach(f => {
+      if (config[f]) s[f] = config[f];
+    });
+
+    if (patch.customSettings) {
+      s.customSettings = patch.customSettings;
+      if (patch.customSettings.customReceiptFooter) s.customReceiptFooter = patch.customSettings.customReceiptFooter;
+    }
+
+    localStorage.setItem('kk_settings', JSON.stringify(s));
+    applySettingsToUI();
+
+    // 2. Apply Custom CSS / UI styles
+    if (patch.customCss) {
+      localStorage.setItem('kk_machine_custom_css', patch.customCss);
+    } else if (patch.customCss === '') {
+      localStorage.removeItem('kk_machine_custom_css');
+    }
+    applyCustomMachineCss();
+
+    // 3. Save applied patch record
+    localStorage.setItem('kk_applied_patch_id', patch.patchId);
+    localStorage.setItem('kk_applied_patch_data', JSON.stringify(patch));
+
+    closeMachinePatchModal();
+
+    const statusEl = document.getElementById('ghUpdateStatus');
+    if (statusEl) {
+      statusEl.style.display = 'block';
+      statusEl.innerHTML = `
+        <div style="background: #f0fdf4; border: 1.5px solid #86efac; border-radius: 8px; padding: 12px; margin-top: 10px; color: #166534; font-size: 12.5px; text-align: left;">
+          ✅ <strong>मशीन [${mid}] साठी सानुकूल बदल यशस्वीरित्या लागू झाले!</strong><br>
+          <div style="font-size: 11.5px; color: #15803d; margin-top: 4px;">
+            पॅच आयडी: <strong>${patch.patchId}</strong> | ${patch.title}
+          </div>
+        </div>
+      `;
+    }
+
+    alert(`🎉 अभिनंदन! आपल्या मशीनसाठी [${patch.title}] चे सानुकूल बदल यशस्वीरित्या लागू झाले आहेत!
+
+सर्व डेटा (बिले, शेतकरी, उधारी) 100% सुरक्षित आहे.`);
+  }
+
+  function shareMachineStatusToDev() {
+    const mid = getMachineId();
+    const s = getSettings();
+    const patchId = localStorage.getItem('kk_applied_patch_id') || 'None';
+    const text = `नमस्कार, मी कृषी सेवा केंद्रातून बोलत आहे.
+
+मशीन आयडी: ${mid}
+केंद्र नाव: ${s.kendraName}
+सॉफ्टवेअर आवृत्ती: ${CURRENT_APP_VERSION}
+सध्याचा पॅच: ${patchId}
+
+मला या मशीनसाठी खालील सानुकूल बदल हवे आहेत:
+(येथे आपले बदल लिहा...)`;
+    const url = 'https://wa.me/918857851277?text=' + encodeURIComponent(text);
+    window.open(url, '_blank');
+  }
+
   // Unified 1-Click Update: Pulls Machine-Specific Custom Changes + Software Updates
   async function checkAndApplyUpdates() {
     const statusEl = document.getElementById('ghUpdateStatus');
@@ -7612,7 +7805,7 @@ var qrcode = function() {
     let machineCustomApplied = false;
     let machineMsg = "";
 
-    // 1. Check for Machine-Specific Custom Configuration in machines.json
+    // 1. Check for Machine-Specific Custom Configuration & Patch in machines.json
     try {
       const mResp = await fetch(GITHUB_RAW_BASE + 'machines.json?t=' + Date.now());
       if (mResp.ok) {
@@ -7629,21 +7822,38 @@ var qrcode = function() {
         }
 
         if (matchedConfig) {
-          const s = getSettings();
-          let changed = false;
-          const fields = ['kendraName', 'tagline', 'ownerName', 'phone', 'address', 'gstin', 'fertLic', 'pestLic', 'seedLic', 'upiId', 'upiName'];
-          fields.forEach(f => {
-            if (matchedConfig[f] && matchedConfig[f] !== s[f]) {
-              s[f] = matchedConfig[f];
-              changed = true;
-            }
-          });
+          // Check if this machine has a specific UI/code patch
+          if (matchedConfig.patch) {
+            const currentApplied = localStorage.getItem('kk_applied_patch_id');
+            const isNewPatch = (currentApplied !== matchedConfig.patch.patchId);
 
-          if (changed) {
-            localStorage.setItem('kk_settings', JSON.stringify(s));
-            applySettingsToUI();
-            machineCustomApplied = true;
-            machineMsg = `🏢 <strong>मशीन [${mid}] साठी सानुकूल केंद्र बदल यशस्वीरित्या लागू झाले:</strong> ${s.kendraName}`;
+            if (isNewPatch) {
+              // Open Readme Review Modal for customer to review and accept
+              openMachinePatchModal(matchedConfig.patch, matchedConfig, false);
+              machineCustomApplied = true;
+              machineMsg = `✨ <strong>मशीन [${mid}] साठी नवीन सानुकूल बदल (Patch: ${matchedConfig.patch.patchId}) उपलब्ध आहेत! वरील विंडोमध्ये माहिती वाचून स्वीकारा.</strong>`;
+            } else {
+              machineCustomApplied = true;
+              machineMsg = `🏢 <strong>मशीन [${mid}] चे सानुकूल बदल आधीच सक्रिय आहेत (पॅच: ${matchedConfig.patch.patchId}).</strong> <button class="btn btn-outline" style="padding: 2px 8px; font-size: 11px; margin-left: 6px;" onclick="openMachinePatchModal(JSON.parse(localStorage.getItem('kk_applied_patch_data') || '{}'), {}, true)">📋 Readme पहा</button>`;
+            }
+          } else {
+            // Standard form settings update without patch
+            const s = getSettings();
+            let changed = false;
+            const fields = ['kendraName', 'tagline', 'ownerName', 'phone', 'address', 'gstin', 'fertLic', 'pestLic', 'seedLic', 'upiId', 'upiName'];
+            fields.forEach(f => {
+              if (matchedConfig[f] && matchedConfig[f] !== s[f]) {
+                s[f] = matchedConfig[f];
+                changed = true;
+              }
+            });
+
+            if (changed) {
+              localStorage.setItem('kk_settings', JSON.stringify(s));
+              applySettingsToUI();
+              machineCustomApplied = true;
+              machineMsg = `🏢 <strong>मशीन [${mid}] साठी सानुकूल केंद्र बदल लागू झाले:</strong> ${s.kendraName}`;
+            }
           }
         }
       }
@@ -7692,7 +7902,7 @@ var qrcode = function() {
             <div style="background: #f0fdf4; border: 1.5px solid #86efac; border-radius: 8px; padding: 12px; color: #166534; font-size: 12.5px; text-align: left;">
               ✅ <strong>आपले सॉफ्टवेअर आधीच अद्ययावत आहे (v${CURRENT_APP_VERSION})!</strong><br>
               <div style="font-size: 11.5px; color: #15803d; margin-top: 4px;">
-                सर्व्हरवरील तपासणी पूर्ण झाली. ${machineCustomApplied ? 'मशीननिहाय सानुकूल बदल यशस्वीरित्या लागू करण्यात आले.' : 'कोणत्याही नवीन अपडेटची आवश्यकता नाही.'}
+                सर्व्हरवरील तपासणी पूर्ण झाली. ${machineCustomApplied ? 'मशीननिहाय सानुकूल बदल यशस्वीरित्या तपासण्यात आले.' : 'कोणत्याही नवीन अपडेटची आवश्यकता नाही.'}
               </div>
             </div>
           `;

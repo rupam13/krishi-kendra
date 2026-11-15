@@ -1,6 +1,7 @@
 {
-  "_comment": "Krishi Kendra Machine-Specific Custom Configuration Manifest",
+  "_comment": "Krishi Kendra Machine-Specific Custom Configuration & Patch Manifest",
   "_repo": "https://github.com/rupam13/krishi-kendra",
+  "_instructions": "Add or modify an entry with the client's Machine ID. When that machine clicks 'Check & Install Updates', it displays the patch Readme and auto-applies custom UI/CSS/settings exclusively to that machine.",
   "KK-DEFAULT": {
     "kendraName": "अक्षय कृषी सेवा केंद्र (Akshay Krishi Seva Kendra)",
     "tagline": "अधिकृत रासायनिक खते, दर्जेदार बियाणे व कीटकनाशके विक्रेते",
@@ -13,5 +14,34 @@
     "seedLic": "SL/MH/2026/4412",
     "upiId": "wadibhasme.rupam1@ybl",
     "notes": "Default production setup template"
+  },
+  "KK-SAMPLE-FORK": {
+    "kendraName": "समर्थ कृषी सेवा केंद्र, नाशिक",
+    "tagline": "शेतकऱ्यांची पहिली पसंती - दर्जेदार कृषी निविष्ठा केंद्र",
+    "ownerName": "गणेश पाटील",
+    "phone": "9823001122",
+    "address": "स्टेशन रोड, नाशिक - ४२२००१",
+    "gstin": "27AAAAA1234A1Z5",
+    "fertLic": "FL/NSK/2026/8812",
+    "pestLic": "PL/NSK/2026/4419",
+    "seedLic": "SL/NSK/2026/1023",
+    "upiId": "samarth.kendra@ybl",
+    "upiName": "Samarth Krishi Seva Kendra",
+    "patch": {
+      "patchId": "PATCH-2026-NSK-01",
+      "version": "v3.2.1-NSK",
+      "title": "नाशिक केंद्रासाठी विशेष प्रिंट व थीम सुधारणा (Machine Fork)",
+      "releaseDate": "2026-11-15",
+      "readme": [
+        "विशेष ३-इंच थर्मल पावतीवर केंद्राचा कस्टम मराठी संदेश जोडला.",
+        "दुकानासाठी खास गडद हिरवी हेडर थीम (Dark Emerald Theme) लागू केली.",
+        "खतांच्या बिलावर ५% शेतकरी सवलत पर्याय सक्षम केला.",
+        "अधिकृत GSTIN व बँक तपशील पावतीवर ठळक अक्षरात अपडेट केले."
+      ],
+      "customCss": ".navbar { background: linear-gradient(135deg, #064e3b, #047857) !important; } .card-title { color: #064e3b !important; }",
+      "customSettings": {
+        "customReceiptFooter": "समर्थ कृषी सेवा केंद्र, नाशिक - शेतकऱ्यांची पहिली पसंती!"
+      }
+    }
   }
 }
